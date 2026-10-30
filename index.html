@@ -1325,7 +1325,7 @@
     if (txt) { txt.classList.remove('show', 'warn'); txt.textContent = ''; }
     var room = document.getElementById('room');
     if (room) room.classList.remove('idle-shake', 'red-flash');
-    roomIdleTimer = setTimeout(roomIdleTick, 20000);
+    roomIdleTimer = setTimeout(roomIdleTick, 15000);
   }
 
   function roomIdleTick() {
@@ -1361,12 +1361,6 @@
     room.addEventListener('mousemove', function (e) {
       room.style.setProperty('--x', e.clientX + 'px');
       room.style.setProperty('--y', e.clientY + 'px');
-      if (roomIdleStage > 0 && roomIdleStage < 4) {
-        roomIdleStage = 1;
-        roomIdleReset();
-      } else if (roomIdleStage === 0) {
-        roomIdleReset();
-      }
     });
         $$('.room-item').forEach(function (it) {
       it.addEventListener('click', function () {
@@ -1406,7 +1400,7 @@
     if (window._ambientNoiseGain) window._ambientNoiseGain.gain.value = 0;
 
     // запускаем аудио концовки
-    var audio = document.getElementById('digital_pain');
+    var audio = document.getElementById('endingAudio1');
     if (audio) {
       audio.volume = 0.7;
       audio.play().catch(function () {});
@@ -1440,7 +1434,7 @@ document.getElementById('tellTruth').addEventListener('click', function () {
     if (window._ambientNoiseGain) window._ambientNoiseGain.gain.value = 0;
 
     // запускаем аудио концовки
-    var audio = document.getElementById('digital_pain');
+    var audio = document.getElementById('endingAudio2');
     if (audio) {
       audio.volume = 0.7;
       audio.play().catch(function () {});
