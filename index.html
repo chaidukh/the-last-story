@@ -761,7 +761,63 @@
     .headline { font-size: 20px; }
     .archive { grid-template-columns: 1fr; }
   }
+  /* ===== КРОВАВЫЙ ЭКРАН ===== */
+  #layer5b.bloody {
+    background: #8b0000 !important;
+  }
+  #layer5b.bloody #trapLight {
+    background: radial-gradient(circle 140px at var(--tx,50%) var(--ty,50%),
+      rgba(255,100,100,.25) 0%, rgba(80,0,0,.96) 70%), #3a0000;
+  }
 
+  /* ===== ХИТПОИНТЫ ===== */
+  .hitpoint {
+    position: absolute;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(139,0,0,.6);
+    box-shadow: 0 0 20px rgba(255,0,0,.8);
+    animation: hpPulse .6s ease-in-out infinite alternate;
+  }
+  @keyframes hpPulse {
+    0% { transform: scale(.9); opacity: .7; }
+    100% { transform: scale(1.1); opacity: 1; }
+  }
+
+  /* ===== ГАЗЕТА В ЛОВУШКЕ ===== */
+  #trapNewspaper {
+    position: absolute; inset: 0;
+    background: var(--paper-old);
+    color: var(--ink);
+    padding: 40px 30px;
+    overflow-y: auto;
+    z-index: 40;
+    opacity: 0;
+    transition: opacity 2s;
+    display: none;
+  }
+  #trapNewspaper.show { opacity: 1; }
+  #trapNewspaper .np-head {
+    font-family: 'IM Fell English', serif;
+    font-size: 24px;
+    text-align: center;
+    border-bottom: 3px double var(--ink);
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+  }
+  #trapNewspaper .np-text {
+    font-family: 'Special Elite', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    column-count: 2;
+    column-gap: 24px;
+    transition: all 2s;
+  }
+  #trapNewspaper .np-text.glitch-out {
+    font-family: 'Courier New', monospace;
+    color: rgba(26,21,18,.3);
+    letter-spacing: 4px;
+  }
   /* ===== ПРЕЛОАДЕР С РОЗОЙ ===== */
   #preloader {
     position: fixed;
@@ -1010,6 +1066,7 @@
       </div>
       <button class="btn rose" id="giveKey" style="font-size:14px;">ОТДАТЬ КЛЮЧ</button>
       <button class="btn" id="keepKey" style="font-size:14px;">НЕ ОТДАВАТЬ</button>
+       </div>
       <!-- газета -->
     <div id="trapNewspaper">
       <div class="np-head">ЖЕНЩИНА ПРОДАЛА СЫНА КУЛЬТИСТАМ</div>
@@ -1051,63 +1108,6 @@
       setTimeout(function () { twEl.remove(); }, 1300);
       try { ensureAudio(); } catch (e) {}
     });
-  }
-  /* ===== КРОВАВЫЙ ЭКРАН ===== */
-  #layer5b.bloody {
-    background: #8b0000 !important;
-  }
-  #layer5b.bloody #trapLight {
-    background: radial-gradient(circle 140px at var(--tx,50%) var(--ty,50%),
-      rgba(255,100,100,.25) 0%, rgba(80,0,0,.96) 70%), #3a0000;
-  }
-
-  /* ===== ХИТПОИНТЫ ===== */
-  .hitpoint {
-    position: absolute;
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    background: rgba(139,0,0,.6);
-    box-shadow: 0 0 20px rgba(255,0,0,.8);
-    animation: hpPulse .6s ease-in-out infinite alternate;
-  }
-  @keyframes hpPulse {
-    0% { transform: scale(.9); opacity: .7; }
-    100% { transform: scale(1.1); opacity: 1; }
-  }
-
-  /* ===== ГАЗЕТА В ЛОВУШКЕ ===== */
-  #trapNewspaper {
-    position: absolute; inset: 0;
-    background: var(--paper-old);
-    color: var(--ink);
-    padding: 40px 30px;
-    overflow-y: auto;
-    z-index: 40;
-    opacity: 0;
-    transition: opacity 2s;
-    display: none;
-  }
-  #trapNewspaper.show { opacity: 1; }
-  #trapNewspaper .np-head {
-    font-family: 'IM Fell English', serif;
-    font-size: 24px;
-    text-align: center;
-    border-bottom: 3px double var(--ink);
-    padding-bottom: 10px;
-    margin-bottom: 16px;
-  }
-  #trapNewspaper .np-text {
-    font-family: 'Special Elite', monospace;
-    font-size: 13px;
-    line-height: 1.8;
-    column-count: 2;
-    column-gap: 24px;
-    transition: all 2s;
-  }
-  #trapNewspaper .np-text.glitch-out {
-    font-family: 'Courier New', monospace;
-    color: rgba(26,21,18,.3);
-    letter-spacing: 4px;
   }
   /* ===== ПРЕЛОАДЕР ===== */
   window.addEventListener('load', function () {
