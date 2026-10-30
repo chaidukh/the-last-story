@@ -516,7 +516,42 @@
     color: rgba(255,255,255,.25);
     pointer-events: none;
   }
+  /* ===== БЕЗДЕЙСТВИЕ В КОМНАТЕ ===== */
+  #idle-room-text {
+    position: fixed;
+    bottom: 70px;
+    left: 0; right: 0;
+    text-align: center;
+    font-family: 'Caveat', cursive;
+    font-size: 26px;
+    color: var(--rose);
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    pointer-events: none;
+    z-index: 80;
+    text-shadow: 0 0 12px rgba(107,31,42,.6);
+  }
+  #idle-room-text.show { opacity: 1; }
+  #idle-room-text.warn { color: var(--alert); font-size: 30px; }
 
+  /* дрожание комнаты после долгого бездействия */
+  .room.idle-shake {
+    animation: idleShake 0.15s steps(2) infinite;
+  }
+  @keyframes idleShake {
+    0%   { transform: translate(0); filter: none; }
+    50%  { transform: translate(-1px, 1px); filter: hue-rotate(-10deg); }
+    100% { transform: translate(1px, -1px); filter: none; }
+  }
+
+  /* красная вспышка комнаты */
+  .room.red-flash {
+    animation: redFlash 0.4s steps(2) 3;
+  }
+  @keyframes redFlash {
+    0%,100% { background-color: transparent; }
+    50% { background-color: rgba(139,0,0,.35); }
+  }
   /* ===== ФИНАЛ ===== */
   .final {
     text-align: center;
@@ -713,11 +748,48 @@
     <div class="hint">пароль — то, чем подписался автор письма</div>
   </div>
 </div>
-
+  <!-- ================= СЛОЙ 0b — ДЕТСКОЕ ПИСЬМО ================= -->
+<div class="layer" id="layer0b">
+  <div class="paper" style="background:#e8dcc0;">
+    <div class="headline" style="font-size:20px;border-bottom:2px solid var(--ink);padding-bottom:6px;">день поездки</div>
+    <div style="font-family:'Caveat',cursive;font-size:20px;line-height:1.9;margin-top:14px;">
+      <p>Родители решили отправить меня к дедушке с бабушкой. Я раньше не был с ними знаком, но они очень добрые и дом у них такой крутой! А еще у них <b>огромный сад</b> с розами, и они разрешают мне помогать.</p>
+      <p>Правда по этой же причине здесь очень много дел. Я не представляю как они каждый день управляются с делами по дому и в саду! но я очень стараюсь им помочь.</p>
+      <p>А еще они знают много интересных историй, постараюсь запомнить все, чтобы потом все-все рассказать.</p>
+      <p>Мне тут нравится, хотя хотел бы уже скорее домой... без друзей и Эми тут очень скучно.</p>
+      <p style="text-align:right;">Мари</p>
+    </div>
+    <div style="text-align:center;margin-top:20px;">
+      <div class="child-drawing" id="childDrawing">
+        <div class="house">
+          <div class="roof"></div>
+          <div class="walls"><div class="door"></div><div class="window"></div></div>
+        </div>
+        <div class="bushes"><div class="bush"></div><div class="bush"></div><div class="bush"></div></div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:16px;">нажми на рисунок</div>
+  </div>
+</div>
+<!-- ================= СЛОЙ 1b — ПИСЬМО МАТЕРИ ================= -->
+<div class="layer" id="layer1b">
+  <div class="paper" style="background:#e0d4b8;">
+    <div class="headline" style="font-size:18px;border-bottom:1px solid var(--ink);padding-bottom:6px;">ПИСЬМО · НЕ ОТПРАВЛЕНО</div>
+    <div style="font-family:'Special Elite',monospace;font-size:13px;line-height:1.8;margin-top:14px;">
+      <p>Уважаемые господа Розенберги,</p>
+      <p>Я, Долорес Бошар, согласна на ваши условия. Мари будет у вас всё лето. Я понимаю, это звучит чудовищно, но у меня нет выбора. Эмили должна учиться.</p>
+      <p>Прошу вас: <b>скажите ему, что вы его дедушка и бабушка</b>. Так он не будет задавать вопросов. Я не хочу, чтобы он знал правду.</p>
+      <p>Я вернусь за ним. Обязательно вернусь. <span class="redacted" id="motherRedacted">████████</span></p>
+      <p>P.S. Я уже оплатила первый семестр. Спасибо.</p>
+    </div>
+    <div class="note" style="margin-top:18px;">нажми на зачёркнутое</div>
+  </div>
+</div>
 <!-- ================= СЛОЙ 1 — ГАЗЕТА / РОЗЫ ================= -->
 <div class="layer" id="layer1">
   <div class="clipping" id="clipping1">
     <div class="tape"></div>
+    <!-- код: КЛЮЧ ОТ ПОДВАЛА -->
     <div class="headline">САДОВНИКИ ИЗ ПРИГОРОДА:<br>«ТИХАЯ ПАРА, ТИХИЙ РАЙ»</div>
     <div class="subhead">Канада · выпуск от 14 сентября · стр. 3</div>
     <div class="columns">
@@ -811,16 +883,31 @@
 </div>
 
 <!-- ================= СЛОЙ 5 — ФИНАЛ ================= -->
-<div class="layer" id="layer5">
   <div class="paper final">
-    <h2>Ты видел. Теперь ты осведомлён.</h2>
-    <p>Эштон так и не вспомнил. Но ты — вспомнил.<br>Роза ждала не его. Она ждала свидетеля.</p>
+    <h2>Теперь ты знаешь правду.</h2>
+    <div style="font-family:'Special Elite',monospace;font-size:12px;line-height:1.7;text-align:left;margin:20px 0;border-top:1px solid var(--rose);border-bottom:1px solid var(--rose);padding:14px 0;">
+      <p><b>ЧТО СТАЛО С СЕМЬЁЙ:</b></p>
+    <p>Розенберги признаны виновными в убийстве первой степени. Тело было изуродовано до неузнаваемости — отягчающее обстоятельство. Других тел не нашли. Показания единственного свидетеля — невнятные, из-за амнезии.</p>
+      <p><b>Долорес Бошар</b> лишена родительских прав. <b>Бернар Бошар</b> ушёл из семьи. <b>Эмили</b> окончила колледж — за счёт тех денег. С братом она больше не виделась.</p>
+      <p>Двое младших братьев выросли в приёмных семьях. Им не сказали, что у них был старший брат.</p>
+      <p><b>Мари Бошар</b> стал <b>Эштоном Редфордом</b>. Он до сих пор носит ключ. Он не помнит, от чего.</p>
+    </div>
     <button class="btn rose" id="keepSecret">СОХРАНИТЬ ТАЙНУ</button>
     <button class="btn" id="tellTruth">РАССКАЗАТЬ ПРАВДУ</button>
+    <button class="btn" id="findCode" style="border-color:var(--dim);color:var(--dim);font-size:11px;">ВВЕСТИ КОД</button>
+  </div>
+<!-- ================= СЛОЙ 5b — БОНУС ================= -->
+<div class="layer" id="layer5b">
+  <div class="paper">
+    <div class="headline" style="font-size:18px;">ДНЕВНИК РОЗЫ · ПОСЛЕДНЯЯ ЗАПИСЬ</div>
+    <div style="font-family:'Caveat',cursive;font-size:18px;line-height:1.9;">
+      <p>Эштон так ничего и не вспомнил и живет счастливую жизнь в неведении. Но теперь эта правда обременяет лишь Вас... И Рознебергов, вышедших на свободу</p>
+      <p>sub rosa</p>
+    </div>
   </div>
 </div>
-
 <!-- ================= СКРИМЕР ================= -->
+  <div id="idle-room-text"></div>
 <div id="screamer">
   <div class="flash"></div>
   <div class="face">X</div>
@@ -868,11 +955,12 @@
     dollsEl.appendChild(d);
   }
   function updateDolls() {
+    var order = { '0b': 0.5, '1b': 1.5, '2b': 2.5, '5b': 5.5 };
+    var cur = order[state.layer] !== undefined ? order[state.layer] : state.layer;
     $$('.doll').forEach(function (d, i) {
-      d.classList.toggle('filled', i <= state.layer);
+      d.classList.toggle('filled', i <= cur);
     });
   }
-
   /* ---------- звук ---------- */
   let audioCtx = null;
   let humOsc = null, humGain = null;
@@ -920,6 +1008,9 @@
       state.layer = n;
       updateDolls();
       if (n === 1) buildRoses();
+      if (n === '0b') initLayer0b();
+      if (n === '1b') initLayer1b();
+      if (n === '2b') initLayer2b();
       if (n === 2) resetArchive();
       if (n === 4) initRoom();
     }, 350);
@@ -973,7 +1064,7 @@
     const val = normalize(input.value);
     if (val === PASSWORD) {
       beep(440, 0.15, 'sine', 0.06);
-      goTo(1);
+      goTo('0b');
     } else {
       glitch(document.querySelector('#layer0 .paper'));
       state.errors++;
@@ -1002,7 +1093,7 @@
         if (this.dataset.faded === '1') {
           beep(523, 0.15, 'sine', 0.06);
           state.rosesDone = true;
-          goTo(2);
+          goTo('1b');
         } else {
           this.classList.add('wrong');
           glitch(document.getElementById('clipping1'));
@@ -1043,7 +1134,7 @@
 
       if (state.archiveStep >= 4) {
         state.archiveDone = true;
-        setTimeout(function () { goTo(3); }, 900);
+  setTimeout(function () { goTo('2b'); }, 900);
       }
     });
   });
@@ -1112,8 +1203,47 @@
     goTo(4);
   });
 
-  /* ---------- комната ---------- */
+   /* ---------- комната ---------- */
   let roomInited = false;
+  let roomIdleStage = 0;
+  let roomIdleTimer = null;
+  const roomIdleTexts = ['он тоже не сразу нашёл', 'не заставляй меня ждать'];
+
+  function roomIdleReset() {
+    clearTimeout(roomIdleTimer);
+    var txt = document.getElementById('idle-room-text');
+    if (txt) { txt.classList.remove('show', 'warn'); txt.textContent = ''; }
+    var room = document.getElementById('room');
+    if (room) room.classList.remove('idle-shake', 'red-flash');
+    roomIdleTimer = setTimeout(roomIdleTick, 20000);
+  }
+
+  function roomIdleTick() {
+    if (state.layer !== 4) return;
+    roomIdleStage++;
+    var txt = document.getElementById('idle-room-text');
+    var room = document.getElementById('room');
+    if (roomIdleStage === 1) {
+      beep(1800, 0.08, 'sine', 0.04);
+      setTimeout(function () { beep(1600, 0.08, 'sine', 0.03); }, 600);
+      roomIdleTimer = setTimeout(roomIdleTick, 20000);
+    } else if (roomIdleStage === 2) {
+      if (txt) { txt.textContent = roomIdleTexts[0]; txt.classList.add('show'); }
+      roomIdleTimer = setTimeout(roomIdleTick, 20000);
+    } else if (roomIdleStage === 3) {
+      screamer();
+      if (txt) { txt.textContent = roomIdleTexts[1]; txt.classList.add('show', 'warn'); }
+      roomIdleTimer = setTimeout(roomIdleTick, 20000);
+    } else if (roomIdleStage === 4) {
+      screamer();
+      beep(60, 1.2, 'sawtooth', 0.2);
+      if (room) { room.classList.add('red-flash'); }
+      setTimeout(function () { if (room) room.classList.remove('red-flash'); }, 1500);
+      if (room) room.classList.add('idle-shake');
+      if (txt) { txt.textContent = ''; txt.classList.remove('show', 'warn'); }
+    }
+  }
+
   function initRoom() {
     if (roomInited) return;
     roomInited = true;
@@ -1121,9 +1251,16 @@
     room.addEventListener('mousemove', function (e) {
       room.style.setProperty('--x', e.clientX + 'px');
       room.style.setProperty('--y', e.clientY + 'px');
+      if (roomIdleStage > 0 && roomIdleStage < 4) {
+        roomIdleStage = 1;
+        roomIdleReset();
+      } else if (roomIdleStage === 0) {
+        roomIdleReset();
+      }
     });
     $$('.room-item').forEach(function (it) {
       it.addEventListener('click', function () {
+        roomIdleReset();
         if (this.dataset.correct === '1') {
           state.roomDone = true;
           screamer();
@@ -1136,8 +1273,26 @@
         }
       });
     });
+    roomIdleReset();
   }
-
+    });
+    $$('.room-item').forEach(function (it) {
+      it.addEventListener('click', function () {
+        roomIdleReset(); // клик сбрасывает
+        if (this.dataset.correct === '1') {
+          state.roomDone = true;
+          screamer();
+          setTimeout(function () { goTo(5); }, 1300);
+        } else {
+          glitch(room);
+          beep(90, 0.2, 'square', 0.08);
+          state.errors++;
+          if (state.errors >= 3) { screamer(); state.errors = 0; }
+        }
+      });
+    });
+    roomIdleReset(); // запуск таймера при входе
+  }
   /* ---------- финал ---------- */
   document.getElementById('keepSecret').addEventListener('click', function () {
     const b = document.getElementById('blackout');
@@ -1167,7 +1322,43 @@
   });
 
   /* ---------- инициализация ---------- */
-  updateDolls();
+  /* ---------- детское письмо ---------- */
+  function initLayer0b() {
+    var d = document.getElementById('childDrawing');
+    if (!d || d.dataset.bound) return;
+    d.dataset.bound = '1';
+    d.addEventListener('click', function () {
+      this.classList.add('dark');
+      glitch(document.querySelector('#layer0b .paper'));
+      beep(70, 0.5, 'sawtooth', 0.12);
+      setTimeout(function () { goTo(1); }, 1200);
+    });
+  }
+
+  /* ---------- письмо матери ---------- */
+  function initLayer1b() {
+    var r = document.getElementById('motherRedacted');
+    if (!r || r.dataset.bound) return;
+    r.dataset.bound = '1';
+    r.addEventListener('click', function () {
+      this.textContent = 'когда закончится учёба дочери';
+      this.style.background = 'transparent';
+      this.style.color = '#6b1f2a';
+      glitch(document.querySelector('#layer1b .paper'));
+      beep(70, 0.4, 'sawtooth', 0.1);
+      setTimeout(function () { goTo(2); }, 1600);
+    });
+  }
+  /* ---------- код ---------- */
+  document.getElementById('findCode').addEventListener('click', function () {
+    var code = prompt('введи код:');
+    if (code && code.toLowerCase() === 'ключ от подвала') {
+      goTo('5b');
+    } else {
+      glitch(document.querySelector('#layer5 .paper'));
+      beep(90, 0.2, 'square', 0.08);
+    }
+  });
 
 })();
 </script>
