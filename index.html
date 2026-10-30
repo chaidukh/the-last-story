@@ -989,6 +989,9 @@
 <script>
 (function () {
   'use strict';
+  <!-- ================= АУДИО КОНЦОВОК ================= -->
+<audio id="endingAudio1" src="limbus vita - digital_pain -v 96.969%" preload="auto"></audio>
+<audio id="endingAudio2" src="limbus vita - digital_pain -v 96.969%" preload="auto"></audio>
 
   /* ===== ТРИГГЕР-ВОРНИНГ ===== */
  var twEl = document.getElementById('triggerWarning');
@@ -1396,7 +1399,17 @@
   document.getElementById('keepSecret').addEventListener('click', function () {
     const b = document.getElementById('blackout');
     b.classList.add('on');
-    beep(60, 2, 'sine', 0.04);
+
+    // останавливаем эмбиент
+    if (humGain) humGain.gain.value = 0;
+    if (window._ambientNoiseGain) window._ambientNoiseGain.gain.value = 0;
+
+    // запускаем аудио концовки
+    var audio = document.getElementById('digital_pain -v 96.969%" preload');
+    if (audio) {
+      audio.volume = 0.7;
+      audio.play().catch(function () {});
+    }
 
     var rosaSpan = b.querySelector('span');
     if (rosaSpan) rosaSpan.style.opacity = '0';
@@ -1420,13 +1433,24 @@
 document.getElementById('tellTruth').addEventListener('click', function () {
     const b = document.getElementById('blackout');
     b.classList.add('on');
-    // скрываем sub rosa, но не удаляем
+
+    // останавливаем эмбиент
+    if (humGain) humGain.gain.value = 0;
+    if (window._ambientNoiseGain) window._ambientNoiseGain.gain.value = 0;
+
+    // запускаем аудио концовки
+    var audio = document.getElementById('digital_pain -v 96.969%" preload');
+    if (audio) {
+      audio.volume = 0.7;
+      audio.play().catch(function () {});
+    }
+
     var rosaSpan = b.querySelector('span');
     if (rosaSpan) rosaSpan.style.opacity = '0';
+
     setTimeout(function () {
-      // добавляем новый текст, не трогая sub rosa
       var info = document.createElement('div');
-      info.style.cssText = 'max-width:600px;text-align:center;line-height:1.6;font-family:"Special Elite",monospace;font-size:13px;color:#d4c5a9;opacity:0;transition:opacity 1.5s;';
+      info.style.cssText = 'max-width:600px;text-align:center;line-height:1.8;font-family:"Special Elite",monospace;font-size:13px;color:#d4c5a9;opacity:0;transition:opacity 1.5s;padding:0 20px;';
       info.innerHTML = 'Он узнал правду, от которой ему стало плохо.<br><br>Но он не остановился на этом... Не смирился с этой правдой и начал искать Розенбергов.<br><br><span style="color:#6b1f2a;font-weight:bold;">И это было последнее, что он сделал.</span>';
       b.appendChild(info);
       setTimeout(function () { info.style.opacity = '1'; }, 100);
