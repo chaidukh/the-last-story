@@ -842,6 +842,10 @@
     background: #f0ebe0;
   }
   #goodScroll {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+  #goodScroll.start {
     animation: scrollUp 40s linear forwards;
   }
   @keyframes scrollUp {
@@ -1114,7 +1118,7 @@
   <!-- ================= СЛОЙ 5c — ХОРОШАЯ КОНЦОВКА ================= -->
 <div class="layer" id="layer5c" style="background:#f0ebe0;">
   <div id="goodEnding" style="position:absolute;inset:0;overflow:hidden;">
-    <div id="goodScroll" style="position:absolute;left:0;right:0;padding:40px 30px;text-align:center;font-family:'Special Elite',monospace;font-size:16px;line-height:2;color:#1a1512;opacity:0;transition:opacity 2s;">
+<div id="goodScroll" style="position:absolute;left:0;right:0;padding:40px 30px;text-align:center;font-family:'Special Elite',monospace;font-size:16px;line-height:2;color:#1a1512;">
       <p style="font-size:24px;color:#6b1f2a;margin-bottom:30px;">ХОРОШАЯ КОНЦОВКА</p>
       <p>Да. Неплохая была история.</p>
       <p>Эштону стало так плевать, что он наконец-то сосредоточился на настоящем.</p>
@@ -1678,11 +1682,11 @@ document.getElementById('tellTruth').addEventListener('click', function () {
         goodAudio.currentTime = 0;
         goodAudio.play().catch(function () {});
       }
-      // запускаем анимацию текста
+       // запускаем анимацию текста
       setTimeout(function () {
         var scroll = document.getElementById('goodScroll');
-        if (scroll) { scroll.style.animation = 'scrollUp 40s linear forwards'; }
-      }, 100);
+        if (scroll) { scroll.classList.add('start'); }
+      }, 600);
       // останавливаем эмбиент, запускаем светлый звук
       if (humGain) humGain.gain.value = 0;
       if (window._ambientNoiseGain) window._ambientNoiseGain.gain.value = 0;
