@@ -1095,6 +1095,9 @@
       <p>Я надеюсь, вы не станете проходить на плохие концовки — всё-таки там страшно и не круто.</p>
       <p>Ладно, всем спасибо. Чмоки-чмоки.</p>
       <p style="margin-top:30px;font-family:'Caveat',cursive;font-size:22px;color:#6b1f2a;">Обязательно поделитесь вашим прохождением.</p>
+       <div style="margin-top:60px;">
+        <img src="ashton.png" alt="Эштон" style="max-width:280px;width:100%;display:block;margin:0 auto;filter:drop-shadow(0 4px 12px rgba(0,0,0,.15));">
+      </div>
       <p style="margin-top:40px;font-size:11px;opacity:.5;">sub rosa · хорошая концовка</p>
     </div>
   </div>
@@ -1610,7 +1613,13 @@ document.getElementById('tellTruth').addEventListener('click', function () {
       info.innerHTML = 'Он узнал правду, от которой ему стало плохо.<br><br>Но он не остановился на этом... Не смирился с этой правдой и начал искать Розенбергов.<br><br><span style="color:#6b1f2a;font-weight:bold;">И это было последнее, что он сделал.</span>';
       b.appendChild(info);
       setTimeout(function () { info.style.opacity = '1'; }, 100);
-      console.log('%cЭШТОН РЕДФОРД', 'color:#6b1f2a;font-size:14px;');
+       setTimeout(function () {
+        var hint = document.createElement('div');
+        hint.style.cssText = 'margin-top:40px;font-family:"Special Elite",monospace;font-size:11px;color:#d4c5a9;opacity:0;transition:opacity 2s;letter-spacing:2px;';
+        hint.innerHTML = '<span style="color:#6b1f2a;">нояш сх тсжегог</span><br><span style="font-size:9px;opacity:.4;letter-spacing:1px;">сдвиг на три</span>';
+        b.appendChild(hint);
+        setTimeout(function () { hint.style.opacity = '0.5'; }, 100);
+      }, 5000);
     }, 2600);
   });
 
