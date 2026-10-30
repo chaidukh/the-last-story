@@ -1325,7 +1325,7 @@
     if (txt) { txt.classList.remove('show', 'warn'); txt.textContent = ''; }
     var room = document.getElementById('room');
     if (room) room.classList.remove('idle-shake', 'red-flash');
-    roomIdleTimer = setTimeout(roomIdleTick, 15000);
+    roomIdleTimer = setTimeout(roomIdleTick, 5000);
   }
 
   function roomIdleTick() {
@@ -1336,14 +1336,14 @@
     if (roomIdleStage === 1) {
       beep(1800, 0.08, 'sine', 0.04);
       setTimeout(function () { beep(1600, 0.08, 'sine', 0.03); }, 600);
-      roomIdleTimer = setTimeout(roomIdleTick, 20000);
+      roomIdleTimer = setTimeout(roomIdleTick, 5000);
     } else if (roomIdleStage === 2) {
       if (txt) { txt.textContent = roomIdleTexts[0]; txt.classList.add('show'); }
-      roomIdleTimer = setTimeout(roomIdleTick, 20000);
+      roomIdleTimer = setTimeout(roomIdleTick, 5000);
     } else if (roomIdleStage === 3) {
       screamer();
       if (txt) { txt.textContent = roomIdleTexts[1]; txt.classList.add('show', 'warn'); }
-      roomIdleTimer = setTimeout(roomIdleTick, 20000);
+      roomIdleTimer = setTimeout(roomIdleTick, 5000);
     } else if (roomIdleStage === 4) {
       screamer();
       beep(60, 1.2, 'sawtooth', 0.2);
