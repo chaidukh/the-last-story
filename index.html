@@ -1594,10 +1594,21 @@ document.getElementById('tellTruth').addEventListener('click', function () {
     });
   }
   /* ---------- код ---------- */
-   document.getElementById('findCode').addEventListener('click', function () {
+  document.getElementById('findCode').addEventListener('click', function () {
     var code = prompt('введи код:');
     if (code && code.toLowerCase().trim() === 'ключ от подвала') {
-      goTo('5b');
+      // принудительно показываем 5b
+      var l5 = document.getElementById('layer5');
+      var l5b = document.getElementById('layer5b');
+      if (l5) { l5.classList.remove('active'); l5.classList.add('exit'); }
+      if (l5b) {
+        l5b.classList.add('active');
+        l5b.style.opacity = '1';
+        l5b.style.visibility = 'visible';
+        l5b.style.transform = 'scale(1)';
+      }
+      state.layer = '5b';
+      updateDolls();
       setTimeout(function () { startTrap(); }, 700);
     } else {
       glitch(document.querySelector('#layer5 .paper'));
