@@ -883,6 +883,7 @@
 </div>
 
 <!-- ================= СЛОЙ 5 — ФИНАЛ ================= -->
+  <div class="layer" id="layer5">
   <div class="paper final">
     <h2>Теперь ты знаешь правду.</h2>
     <div style="font-family:'Special Elite',monospace;font-size:12px;line-height:1.7;text-align:left;margin:20px 0;border-top:1px solid var(--rose);border-bottom:1px solid var(--rose);padding:14px 0;">
@@ -896,6 +897,7 @@
     <button class="btn" id="tellTruth">РАССКАЗАТЬ ПРАВДУ</button>
     <button class="btn" id="findCode" style="border-color:var(--dim);color:var(--dim);font-size:11px;">ВВЕСТИ КОД</button>
   </div>
+   </div> 
 <!-- ================= СЛОЙ 5b — БОНУС ================= -->
 <div class="layer" id="layer5b">
   <div class="paper">
@@ -1134,7 +1136,7 @@
 
       if (state.archiveStep >= 4) {
         state.archiveDone = true;
-  setTimeout(function () { goTo('2b'); }, 900);
+  setTimeout(function () { goTo(3); }, 900);
       }
     });
   });
@@ -1245,6 +1247,7 @@
   }
 
   function initRoom() {
+   function initRoom() {
     if (roomInited) return;
     roomInited = true;
     const room = document.getElementById('room');
@@ -1275,24 +1278,6 @@
     });
     roomIdleReset();
   }
-    });
-    $$('.room-item').forEach(function (it) {
-      it.addEventListener('click', function () {
-        roomIdleReset(); // клик сбрасывает
-        if (this.dataset.correct === '1') {
-          state.roomDone = true;
-          screamer();
-          setTimeout(function () { goTo(5); }, 1300);
-        } else {
-          glitch(room);
-          beep(90, 0.2, 'square', 0.08);
-          state.errors++;
-          if (state.errors >= 3) { screamer(); state.errors = 0; }
-        }
-      });
-    });
-    roomIdleReset(); // запуск таймера при входе
-  }
   /* ---------- финал ---------- */
   document.getElementById('keepSecret').addEventListener('click', function () {
     const b = document.getElementById('blackout');
@@ -1315,7 +1300,9 @@
 
   /* ---------- блокировка ухода ---------- */
   window.addEventListener('beforeunload', function (e) {
-    if (state.layer > 0 && state.layer < 5) {
+    var order = { '0b': 0.5, '1b': 1.5, '5b': 5.5 };
+    var cur = order[state.layer] !== undefined ? order[state.layer] : state.layer;
+    if (cur > 0 && cur < 5) {
       e.preventDefault();
       e.returnValue = '';
     }
@@ -1352,7 +1339,7 @@
   /* ---------- код ---------- */
   document.getElementById('findCode').addEventListener('click', function () {
     var code = prompt('введи код:');
-    if (code && code.toLowerCase() === 'ключ от подвала') {
+    if (code && code.toLowerCase().trim() === 'ключ от подвала') {
       goTo('5b');
     } else {
       glitch(document.querySelector('#layer5 .paper'));
