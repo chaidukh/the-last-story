@@ -374,11 +374,13 @@
     margin-top: 18px;
     text-align: center;
   }
-  .key { display: inline-block; cursor: pointer; transition: transform .3s, filter .3s; }
+  .key {
+    display: inline-block;
+    cursor: pointer;
+    transition: transform .3s, filter .3s;
+  }
   .key:hover { transform: rotate(-12deg) scale(1.1); }
   .key.locked { filter: grayscale(1) brightness(.5); cursor: not-allowed; }
-  .key svg { display: block; filter: drop-shadow(0 0 6px rgba(107,31,42,.6)); }
-
    /* ===== ПРОПУСКИ В ДЕЛЕ ===== */
   .blank {
     position: relative;
@@ -853,15 +855,8 @@
       </div>
       </div>
     <div class="key-zone">
-      <div class="key locked" id="key" title="ключ">
-        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#6b1f2a" stroke-width="2.5">
-          <circle cx="20" cy="20" r="11"/>
-          <circle cx="20" cy="20" r="4"/>
-          <line x1="28" y1="28" x2="52" y2="52"/>
-          <line x1="44" y1="52" x2="52" y2="44"/>
-          <line x1="38" y1="46" x2="44" y2="40"/>
-        </svg>
-      </div>
+      <img id="key" class="key locked" src="key.png" alt="ключ"
+           style="width:80px;cursor:not-allowed;filter:grayscale(1) brightness(.5);transition:filter .4s, transform .3s;">
       <div class="hint" id="keyHint">ключ не поворачивается, пока дело не собрано</div>
     </div>
   </div>
@@ -875,6 +870,10 @@
     <div class="room-item" style="top:30%;left:70%;" data-correct="0">инструменты</div>
     <div class="room-item" style="top:70%;left:68%;" data-correct="1">мешок</div>
     <div class="room-item" style="top:45%;left:45%;" data-correct="0">стул</div>
+     <img id="skyWindow" src="sky.png" alt=""
+         style="position:absolute;top:6%;right:8%;width:140px;opacity:.25;filter:grayscale(.6) brightness(.6);cursor:pointer;transition:opacity .4s, filter .4s;"
+         onmouseover="this.style.opacity='.6'; this.style.filter='grayscale(.3) brightness(.9)'"
+         onmouseout="this.style.opacity='.25'; this.style.filter='grayscale(.6) brightness(.6)'">
     <div class="room-hint">найди то, что он перетаскивал</div>
   </div>
 </div>
@@ -902,9 +901,10 @@
     <div style="font-family:'Caveat',cursive;font-size:18px;line-height:1.9;">
       <p>Эштон так ничего и не вспомнил и живет счастливую жизнь в неведении. Но теперь эта правда обременяет лишь Вас... И Рознебергов, вышедших на свободу</p>
       <p>sub rosa</p>
-    </div>
+   </div>
+    <button class="btn" id="backToFinal" style="margin-top:20px;">ВЕРНУТЬСЯ</button>
   </div>
-</div>
+</div>>
 <!-- ================= СКРИМЕР ================= -->
   <div id="idle-room-text"></div>
 <div id="screamer">
@@ -1186,10 +1186,14 @@
   document.addEventListener('click', function () {
     closeAllOptions();
   });
-  function unlockKey() {
+ function unlockKey() {
     const k = document.getElementById('key');
     k.classList.remove('locked');
+    k.style.filter = 'none';
+    k.style.cursor = 'pointer';
+    k.src = 'key_dark.png';
     document.getElementById('keyHint').textContent = 'ключ поворачивается…';
+    beep(180, 0.4, 'sawtooth', 0.08);
     state.dossierDone = true;
   }
   document.getElementById('key').addEventListener('click', function () {
@@ -1256,7 +1260,7 @@
         roomIdleReset();
       }
     });
-    $$('.room-item').forEach(function (it) {
+        $$('.room-item').forEach(function (it) {
       it.addEventListener('click', function () {
         roomIdleReset();
         if (this.dataset.correct === '1') {
@@ -1271,6 +1275,17 @@
         }
       });
     });
+
+    var sky = document.getElementById('skyWindow');
+    if (sky && !sky.dataset.bound) {
+      sky.dataset.bound = '1';
+      sky.addEventListener('click', function () {
+        screamer();
+        beep(60, 1.5, 'sawtooth', 0.18);
+        glitch(room);
+      });
+    }
+
     roomIdleReset();
   }
   /* ---------- финал ---------- */
@@ -1279,16 +1294,19 @@
     b.classList.add('on');
     beep(60, 2, 'sine', 0.04);
   });
-  document.getElementById('tellTruth').addEventListener('click', function () {
+document.getElementById('tellTruth').addEventListener('click', function () {
     const b = document.getElementById('blackout');
     b.classList.add('on');
+    // скрываем sub rosa, но не удаляем
+    var rosaSpan = b.querySelector('span');
+    if (rosaSpan) rosaSpan.style.opacity = '0';
     setTimeout(function () {
-      b.innerHTML = '<span style="max-width:600px;text-align:center;line-height:1.6;">' +
-        'ДЕЛО РОЗЕНБЕРГОВ. Садовники приговорены. Имя ребёнка изменено. ' +
-        'Настоящее имя скрыто в исходном коде этой страницы.' +
-        '</span>';
-      b.querySelector('span').style.opacity = '1';
-      // настоящее имя — в консоли
+      // добавляем новый текст, не трогая sub rosa
+      var info = document.createElement('div');
+      info.style.cssText = 'max-width:600px;text-align:center;line-height:1.6;font-family:"Special Elite",monospace;font-size:13px;color:#d4c5a9;opacity:0;transition:opacity 1.5s;';
+      info.innerHTML = 'ДЕЛО РОЗЕНБЕРГОВ.<br>Садовники приговорены.<br>Имя ребёнка изменено.<br>Настоящее имя скрыто в исходном коде этой страницы.';
+      b.appendChild(info);
+      setTimeout(function () { info.style.opacity = '1'; }, 100);
       console.log('%cЭШТОН РЕДФОРД — не настоящее имя.', 'color:#6b1f2a;font-size:14px;');
     }, 2600);
   });
@@ -1342,6 +1360,8 @@
     }
   });
 
+  document.getElementById('backToFinal').addEventListener('click', function () {
+    goTo(5);
 })();
 </script>
 </body>
