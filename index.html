@@ -733,3 +733,259 @@
     archiveStep: 0,
     archiveDone: false,
     blanksFilled: 0,
+    } catch (e) {}
+  }
+  function beep(freq, dur, type, vol) {
+    if (state.muted) return;
+    ensureAudio();
+    if (!audioCtx) return;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = type || 'sine';
+    o.frequency.value = freq;
+    g.gain.value = vol || 0.05;
+    o.connect(g).connect(audioCtx.destination);
+    o.start();
+    o.stop(audioCtx.currentTime + (dur || 0.1));
+  }
+  document.getElementById('mute').addEventListener('click', function () {
+    state.muted = !state.muted;
+    this.textContent = state.muted ? 'ЗВУК: ВЫКЛ' : 'ЗВУК: ВКЛ';
+    if (humGain) humGain.gain.value = state.muted ? 0 : 0.025;
+  });
+
+  /* ---------- переходы ---------- */
+  function goTo(n) {
+    if (n === state.layer) return;
+    const cur = document.getElementById('layer' + state.layer);
+    const next = document.getElementById('layer' + n);
+    if (cur) { cur.classList.add('exit'); cur.classList.remove('active'); }
+    setTimeout(function () {
+      if (cur) cur.classList.remove('exit');
+      if (next) next.classList.add('active');
+      state.layer = n;
+      updateDolls();
+      if (n === 1) buildRoses();
+      if (n === 2) resetArchive();
+      if (n === 4) initRoom();
+    }, 350);
+  }
+
+  /* ---------- глитч и скример ---------- */
+  function glitch(el) {
+    if (!el) return;
+    el.classList.add('glitch');
+    setTimeout(function () { el.classList.remove('glitch'); }, 400);
+  }
+  let screamTimer = null;
+  function screamer() {
+    const s = document.getElementById('screamer');
+    s.classList.add('on');
+    beep(80, 0.6, 'sawtooth', 0.15);
+    clearTimeout(screamTimer);
+    screamTimer = setTimeout(function () {
+      s.classList.remove('on');
+    }, 1200);
+  }
+
+  /* ---------- письмо ---------- */
+  const letterText =
+    'Здравствуй, уважаемый читатель.\n\n' +
+    'Ты ступил на путь искателя правды. Ты переступил порог, за которым обыденность теряет власть, и я заявляю тебе точно: любопытство — не порок и, в данном случае, оно непременно будет вознаграждено.\n\n' +
+    'Именно ты видишь то, что недоступно взору Эштона. Он смотрит в тень и ничего не видит, но тебе доступно больше.\n\n' +
+    'Готов ли ты стать тем, кто узнает о природе этой тени? Готов ли ты искать странности? Если так, я очень рад. Буду с трепетом в сердце ждать нашей новой встречи.\n\n' +
+    'Подпишись так же, как подписался я, — и я узнаю, что ты осведомлён.';
+
+  const tw = document.getElementById('typewriter');
+  let ti = 0;
+  function typeLetter() {
+    if (ti <= letterText.length) {
+      tw.textContent = letterText.slice(0, ti);
+      ti++;
+      setTimeout(typeLetter, 18);
+    } else {
+      const cur = document.createElement('span');
+      cur.className = 'cursor';
+      tw.appendChild(cur);
+    }
+  }
+  typeLetter();
+
+  function normalize(s) {
+    return s.toLowerCase().replace(/\s+/g, ' ').trim();
+  }
+  function checkPassword() {
+    const input = document.getElementById('answer');
+    const val = normalize(input.value);
+    if (val === PASSWORD) {
+      beep(440, 0.15, 'sine', 0.06);
+      goTo(1);
+    } else {
+      glitch(document.querySelector('#layer0 .paper'));
+      state.errors++;
+      beep(120, 0.2, 'square', 0.08);
+      if (state.errors >= 3) { screamer(); state.errors = 0; }
+    }
+  }
+  document.getElementById('submitBtn').addEventListener('click', checkPassword);
+  document.getElementById('answer').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') checkPassword();
+  });
+
+  /* ---------- розы ---------- */
+  let rosesBuilt = false;
+  function buildRoses() {
+    if (rosesBuilt) return;
+    rosesBuilt = true;
+    const box = document.getElementById('roses');
+    const total = 10;
+    const fadedIndex = 6;
+    for (let i = 0; i < total; i++) {
+      const r = document.createElement('div');
+      r.className = 'rose' + (i === fadedIndex ? ' faded' : '');
+      r.dataset.faded = (i === fadedIndex) ? '1' : '0';
+      r.addEventListener('click', function () {
+        if (this.dataset.faded === '1') {
+          beep(523, 0.15, 'sine', 0.06);
+          state.rosesDone = true;
+          goTo(2);
+        } else {
+          this.classList.add('wrong');
+          glitch(document.getElementById('clipping1'));
+          state.errors++;
+          beep(100, 0.2, 'square', 0.08);
+          if (state.errors >= 3) { screamer(); state.errors = 0; }
+          const self = this;
+          setTimeout(function () { self.classList.remove('wrong'); }, 600);
+        }
+      });
+      box.appendChild(r);
+    }
+  }
+
+  /* ---------- архив ---------- */
+  function resetArchive() {
+    state.archiveStep = 0;
+    state.archiveDone = false;
+    $$('#archive .item').forEach(function (it) {
+      it.classList.remove('done');
+    });
+  }
+  $$('#archive .item').forEach(function (item) {
+    item.addEventListener('click', function () {
+      const order = parseInt(this.dataset.order, 10);
+      if (order === state.archiveStep + 1) {
+        this.classList.add('done');
+        state.archiveStep++;
+        beep(330 + state.archiveStep * 40, 0.12, 'sine', 0.05);
+        if (state.archiveStep === 4) {
+          state.archiveDone = true;
+          setTimeout(function () { goTo(3); }, 600);
+        }
+      } else {
+        this.classList.add('shake');
+        glitch(document.querySelector('#layer2 .paper'));
+        state.errors++;
+        beep(90, 0.2, 'square', 0.08);
+        if (state.errors >= 3) { screamer(); state.errors = 0; }
+        const self = this;
+        setTimeout(function () { self.classList.remove('shake'); }, 450);
+      }
+    });
+  });
+
+  /* ---------- досье ---------- */
+  $$('#layer3 .blank').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (this.classList.contains('filled')) return;
+      const ans = prompt('впиши слово:');
+      if (ans && normalize(ans).indexOf(this.dataset.answer) === 0) {
+        this.textContent = ans.trim();
+        this.classList.add('filled');
+        state.blanksFilled++;
+        beep(440, 0.12, 'sine', 0.05);
+        if (state.blanksFilled >= 3) unlockKey();
+      } else if (ans) {
+        glitch(document.querySelector('#layer3 .paper'));
+        beep(100, 0.2, 'square', 0.08);
+        state.errors++;
+        if (state.errors >= 3) { screamer(); state.errors = 0; }
+      }
+    });
+  });
+  function unlockKey() {
+    const k = document.getElementById('key');
+    k.classList.remove('locked');
+    document.getElementById('keyHint').textContent = 'ключ поворачивается…';
+    state.dossierDone = true;
+  }
+  document.getElementById('key').addEventListener('click', function () {
+    if (this.classList.contains('locked')) {
+      glitch(document.querySelector('#layer3 .paper'));
+      return;
+    }
+    beep(220, 0.3, 'sine', 0.06);
+    goTo(4);
+  });
+
+  /* ---------- комната ---------- */
+  let roomInited = false;
+  function initRoom() {
+    if (roomInited) return;
+    roomInited = true;
+    const room = document.getElementById('room');
+    room.addEventListener('mousemove', function (e) {
+      room.style.setProperty('--x', e.clientX + 'px');
+      room.style.setProperty('--y', e.clientY + 'px');
+    });
+    $$('.room-item').forEach(function (it) {
+      it.addEventListener('click', function () {
+        if (this.dataset.correct === '1') {
+          state.roomDone = true;
+          screamer();
+          setTimeout(function () { goTo(5); }, 1300);
+        } else {
+          glitch(room);
+          beep(90, 0.2, 'square', 0.08);
+          state.errors++;
+          if (state.errors >= 3) { screamer(); state.errors = 0; }
+        }
+      });
+    });
+  }
+
+  /* ---------- финал ---------- */
+  document.getElementById('keepSecret').addEventListener('click', function () {
+    const b = document.getElementById('blackout');
+    b.classList.add('on');
+    beep(60, 2, 'sine', 0.04);
+  });
+  document.getElementById('tellTruth').addEventListener('click', function () {
+    const b = document.getElementById('blackout');
+    b.classList.add('on');
+    setTimeout(function () {
+      b.innerHTML = '<span style="max-width:600px;text-align:center;line-height:1.6;">' +
+        'ДЕЛО РОЗЕНБЕРГОВ. Садовники приговорены. Имя ребёнка изменено. ' +
+        'Настоящее имя скрыто в исходном коде этой страницы.' +
+        '</span>';
+      b.querySelector('span').style.opacity = '1';
+      // настоящее имя — в консоли
+      console.log('%cЭШТОН РЕДФОРД — не настоящее имя.', 'color:#6b1f2a;font-size:14px;');
+    }, 2600);
+  });
+
+  /* ---------- блокировка ухода ---------- */
+  window.addEventListener('beforeunload', function (e) {
+    if (state.layer > 0 && state.layer < 5) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+
+  /* ---------- инициализация ---------- */
+  updateDolls();
+
+})();
+</script>
+</body>
+</html>
