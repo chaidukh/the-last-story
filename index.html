@@ -818,28 +818,7 @@
     color: rgba(26,21,18,.3);
     letter-spacing: 4px;
   }
-  /* ===== ПРЕЛОАДЕР С РОЗОЙ ===== */
-  #preloader {
-    position: fixed;
-    inset: 0;
-    background: var(--bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100000;
-    transition: opacity 1s ease;
-  }
-  #preloader.hide { opacity: 0; pointer-events: none; }
-  #preloader img {
-    width: 180px;
-    filter: grayscale(40%) brightness(0.9);
-    animation: breathe 3s ease-in-out infinite;
-  }
-  @keyframes breathe {
-    0%, 100% { opacity: 0.5; transform: scale(0.98); }
-    50%      { opacity: 1;   transform: scale(1.02); }
-  }
-     /* ===== ФОН SKY.PNG В ЛОВУШКЕ ===== */
+       /* ===== ФОН SKY.PNG В ЛОВУШКЕ ===== */
   #trapSky {
     position: absolute;
     inset: 0;
@@ -869,6 +848,27 @@
     0% { transform: translateY(100vh); opacity: 0; }
     10% { opacity: 1; }
     100% { transform: translateY(-100%); opacity: 1; }
+  }
+  /* ===== ПРЕЛОАДЕР С РОЗОЙ ===== */
+  #preloader {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    transition: opacity 1s ease;
+  }
+  #preloader.hide { opacity: 0; pointer-events: none; }
+  #preloader img {
+    width: 180px;
+    filter: grayscale(40%) brightness(0.9);
+    animation: breathe 3s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.5; transform: scale(0.98); }
+    50%      { opacity: 1;   transform: scale(1.02); }
   }
   /* ===== ПРЕЛОАДЕР ===== */
   window.addEventListener('load', function () {
