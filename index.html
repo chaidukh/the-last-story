@@ -753,22 +753,19 @@
   <div class="paper" style="background:#e8dcc0;">
     <div class="headline" style="font-size:20px;border-bottom:2px solid var(--ink);padding-bottom:6px;">день поездки</div>
     <div style="font-family:'Caveat',cursive;font-size:20px;line-height:1.9;margin-top:14px;">
-      <p>Родители решили отправить меня к дедушке с бабушкой. Я раньше не был с ними знаком, но они очень добрые и дом у них такой крутой! А еще у них <b>огромный сад</b> с розами, и они разрешают мне помогать.</p>
+      <p>Родители решили отправить меня к дедушке с бабушкой. Я раньше не был с ними знаком, но они очень добрые и дом у них такой крутой! А еще у них <b>огромный сад</b> с розами.</p>
       <p>Правда по этой же причине здесь очень много дел. Я не представляю как они каждый день управляются с делами по дому и в саду! но я очень стараюсь им помочь.</p>
       <p>А еще они знают много интересных историй, постараюсь запомнить все, чтобы потом все-все рассказать.</p>
       <p>Мне тут нравится, хотя хотел бы уже скорее домой... без друзей и Эми тут очень скучно.</p>
       <p style="text-align:right;">Мари</p>
     </div>
-    <div style="text-align:center;margin-top:20px;">
-      <div class="child-drawing" id="childDrawing">
-        <div class="house">
-          <div class="roof"></div>
-          <div class="walls"><div class="door"></div><div class="window"></div></div>
-        </div>
-        <div class="bushes"><div class="bush"></div><div class="bush"></div><div class="bush"></div></div>
-      </div>
+    <div style="text-align:right;margin-top:16px;">
+      <img id="childDrawing" src="house.png" alt=""
+           style="width:140px;cursor:pointer;transform:rotate(-3deg);box-shadow:0 4px 12px rgba(0,0,0,.25);transition:transform .2s;"
+           onmouseover="this.style.transform='rotate(0deg) scale(1.04)'"
+           onmouseout="this.style.transform='rotate(-3deg) scale(1)'">
     </div>
-    <div class="note" style="margin-top:16px;">нажми на рисунок</div>
+    <div class="note" style="margin-top:10px;text-align:right;">нажми на рисунок</div>
   </div>
 </div>
 <!-- ================= СЛОЙ 1b — ПИСЬМО МАТЕРИ ================= -->
@@ -1308,15 +1305,15 @@
 
   /* ---------- инициализация ---------- */
   /* ---------- детское письмо ---------- */
-  function initLayer0b() {
+   function initLayer0b() {
     var d = document.getElementById('childDrawing');
     if (!d || d.dataset.bound) return;
     d.dataset.bound = '1';
     d.addEventListener('click', function () {
-      this.classList.add('dark');
+      this.src = 'house_dark.png';
       glitch(document.querySelector('#layer0b .paper'));
       beep(70, 0.5, 'sawtooth', 0.12);
-      setTimeout(function () { goTo(1); }, 1200);
+      setTimeout(function () { goTo(1); }, 1400);
     });
   }
 
