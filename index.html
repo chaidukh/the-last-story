@@ -986,9 +986,6 @@
 <!-- ================= ЗАТУХАНИЕ ================= -->
 <div id="blackout"><span>sub rosa</span></div>
 
-<script>
-(function () {
-  'use strict';
   <!-- ================= АУДИО КОНЦОВОК ================= -->
 <audio id="endingAudio1" src="digital_pain.mp3" preload="auto"></audio>
 <audio id="endingAudio2" src="digital_pain.mp3" preload="auto"></audio>
@@ -1409,7 +1406,7 @@
     if (window._ambientNoiseGain) window._ambientNoiseGain.gain.value = 0;
 
     // запускаем аудио концовки
-    var audio = document.getElementById('digital_pain" preload');
+    var audio = document.getElementById('digital_pain');
     if (audio) {
       audio.volume = 0.7;
       audio.play().catch(function () {});
