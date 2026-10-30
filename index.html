@@ -790,7 +790,6 @@
 </head>
 <body>
   <!-- ================= ТРИГГЕР-ВОРНИНГ ================= -->
-<!-- ================= ТРИГГЕР-ВОРНИНГ ================= -->
 <div id="triggerWarning">
   <div class="tw-box">
     <div class="tw-title">ПРЕДУПРЕЖДЕНИЕ</div>
@@ -1442,7 +1441,7 @@ document.getElementById('tellTruth').addEventListener('click', function () {
     }
   });
 
-     document.getElementById('backToFinal').addEventListener('click', function () {
+    document.getElementById('backToFinal').addEventListener('click', function () {
     var b = document.getElementById('blackout');
     b.classList.remove('on');
     // очистить добавленный текст, вернуть sub rosa
@@ -1452,5 +1451,8 @@ document.getElementById('tellTruth').addEventListener('click', function () {
     if (rosa) rosa.style.opacity = '1';
     goTo(5);
   });
+
+})();
+</script>
 </body>
 </html>
