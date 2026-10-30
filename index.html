@@ -1617,7 +1617,7 @@ document.getElementById('tellTruth').addEventListener('click', function () {
       beep(90, 0.2, 'square', 0.08);
     }
   });
-  /* ============================================================
+   /* ============================================================
      ЛОВУШКА — финальная сцена
      ============================================================ */
   function startTrap() {
@@ -1633,11 +1633,9 @@ document.getElementById('tellTruth').addEventListener('click', function () {
     var npText = document.getElementById('npText');
     var layer = document.getElementById('layer5b');
 
-    // отключаем эмбиент
     if (humGain) humGain.gain.value = 0;
     if (window._ambientNoiseGain) window._ambientNoiseGain.gain.value = 0;
 
-    // фонарик
     room.addEventListener('mousemove', function (e) {
       var r = room.getBoundingClientRect();
       var x = ((e.clientX - r.left) / r.width) * 100;
@@ -1646,25 +1644,20 @@ document.getElementById('tellTruth').addEventListener('click', function () {
       light.style.setProperty('--ty', y + '%');
     });
 
-    // шаг 1 — текст
     setTimeout(function () {
       txt.textContent = 'Тебе было любопытно. И ты решил двигаться по темноте.';
       txt.style.opacity = '1';
     }, 500);
 
-    // шаг 2 — ключ появляется
     setTimeout(function () {
       key.style.filter = 'brightness(1) drop-shadow(0 0 12px rgba(139,0,0,.8))';
     }, 4000);
 
-    // клик по ключу
     key.addEventListener('click', function () {
       beep(180, 0.5, 'sine', 0.08);
       key.style.transform = 'scale(0)';
       key.style.opacity = '0';
       txt.innerHTML = 'Ты решил забрать ключ.<br>Ты действительно хочешь знать, что за той дверью.';
-
-      // дверь приближается
       setTimeout(function () {
         door.style.opacity = '1';
         door.style.transform = 'translateX(-50%) scale(1)';
@@ -1672,16 +1665,11 @@ document.getElementById('tellTruth').addEventListener('click', function () {
       }, 1500);
     });
 
-    // клик по двери
     door.addEventListener('click', function () {
       if (door.dataset.opened) return;
       door.dataset.opened = '1';
-
-      // всё краснеет
       layer.classList.add('bloody');
       beep(80, 1.5, 'sawtooth', 0.2);
-
-      // хиты
       hits.style.display = 'block';
       for (var i = 0; i < 40; i++) {
         var hp = document.createElement('div');
@@ -1698,12 +1686,8 @@ document.getElementById('tellTruth').addEventListener('click', function () {
         });
         hits.appendChild(hp);
       }
-
-      // надпись БЕГИ
       runText.style.display = 'flex';
       beep(60, 3, 'sawtooth', 0.15);
-
-      // через 4 сек — сад
       setTimeout(function () {
         runText.style.display = 'none';
         hits.style.display = 'none';
@@ -1711,15 +1695,12 @@ document.getElementById('tellTruth').addEventListener('click', function () {
         door.style.opacity = '0';
         txt.innerHTML = 'Они поймали тебя.<br><br>Ты именно там, где они говорили тебе копать яму. Прямо под Луной. Прямо под розовыми кустами.<br><br>Теперь ты понимаешь: всё это было жертвоприношением. И тот, кого ты лично перетаскивал из той комнаты — предыдущий обитатель дома.<br><br>Но уже слишком поздно. Им нужен ключ.';
         txt.style.opacity = '1';
-
-        // через 6 сек — выбор
         setTimeout(function () {
           choice.style.display = 'flex';
         }, 6000);
       }, 4000);
     });
 
-    // выбор — отдать
     document.getElementById('giveKey').addEventListener('click', function () {
       choice.style.display = 'none';
       txt.innerHTML = 'Ты протягиваешь ключ.<br><br>Они начинают кричать, чтобы ты сказал, где ключ.<br><br>Но тебе очень страшно и холодно...';
@@ -1728,7 +1709,6 @@ document.getElementById('tellTruth').addEventListener('click', function () {
       endTrap();
     });
 
-    // выбор — не отдавать
     document.getElementById('keepKey').addEventListener('click', function () {
       choice.style.display = 'none';
       txt.innerHTML = 'Ты сжимаешь ключ в руке.<br><br>Они начинают кричать, чтобы ты сказал, где ключ.<br><br>Но тебе очень страшно и холодно...';
@@ -1737,24 +1717,19 @@ document.getElementById('tellTruth').addEventListener('click', function () {
       endTrap();
     });
 
-    // финал
     function endTrap() {
       setTimeout(function () {
         txt.innerHTML = '<span style="color:#6b1f2a;font-size:18px;">Такова цена любопытства.</span>';
         txt.style.opacity = '1';
         beep(50, 3, 'sine', 0.05);
       }, 4000);
-
-      // газета
       setTimeout(function () {
         txt.style.opacity = '0';
         newspaper.style.display = 'block';
         setTimeout(function () { newspaper.classList.add('show'); }, 100);
-
-        // газета распадается в символы
         setTimeout(function () {
           npText.classList.add('glitch-out');
-          npText.innerHTML = '▓▒░ ██▓▒░ █████ ▒░▓ ██▓▒░ █████ ▒░▓ ██▓▒░ █████ ▒░▓ ██▓▒░ █████';
+          npText.innerHTML = '▓▒░ ██▓▒░ █████ ▒░▓ ██▓▒░ █████ ▒░▓ ██▒░ █████ ▒░▓ ██▓▒░ █████';
           beep(30, 5, 'sawtooth', 0.08);
         }, 8000);
       }, 8000);
