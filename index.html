@@ -870,14 +870,6 @@
     0%, 100% { opacity: 0.5; transform: scale(0.98); }
     50%      { opacity: 1;   transform: scale(1.02); }
   }
-  /* ===== ПРЕЛОАДЕР ===== */
-  window.addEventListener('load', function () {
-    setTimeout(function () {
-      var pre = document.getElementById('preloader');
-      if (pre) pre.classList.add('hide');
-      document.body.classList.add('loaded');
-    }, 3600);
-  });
 
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1159,6 +1151,14 @@
 <script>
 (function () {
   'use strict';
+  /* ===== ПРЕЛОАДЕР ===== */
+  window.addEventListener('load', function () {
+    setTimeout(function () {
+      var pre = document.getElementById('preloader');
+      if (pre) pre.classList.add('hide');
+      document.body.classList.add('loaded');
+    }, 3600);
+  });
 
   /* ===== ТРИГГЕР-ВОРНИНГ ===== */
  var twEl = document.getElementById('triggerWarning');
