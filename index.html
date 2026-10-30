@@ -25,7 +25,6 @@
     cursor: default;
     user-select: none;
   }
-  /* деревянный стол */
   body::before {
     content: '';
     position: fixed; inset: 0;
@@ -34,7 +33,6 @@
       radial-gradient(ellipse at 50% 40%, #1a1410 0%, #0d0b0a 70%);
     z-index: -2;
   }
-  /* зерно плёнки */
   body::after {
     content: '';
     position: fixed; inset: -50%;
@@ -81,7 +79,6 @@
   }
   .paper::-webkit-scrollbar { width: 6px; }
   .paper::-webkit-scrollbar-thumb { background: rgba(0,0,0,.3); }
-  /* загнутый уголок */
   .paper::after {
     content: '';
     position: absolute; top: 0; right: 0;
@@ -123,7 +120,6 @@
     transform: rotate(-2deg);
   }
 
-  /* поле ввода — строка на бумаге */
   .input-row {
     margin-top: 26px;
     border-bottom: 1px dashed rgba(0,0,0,.35);
@@ -178,7 +174,6 @@
   }
   .clipping::-webkit-scrollbar { width: 6px; }
   .clipping::-webkit-scrollbar-thumb { background: rgba(0,0,0,.3); }
-  /* скотч */
   .tape {
     position: absolute; top: -12px; left: 50%;
     width: 120px; height: 26px;
@@ -300,7 +295,13 @@
     gap: 6px;
   }
   .item:hover { transform: translateY(-3px) rotate(-.5deg); background: rgba(255,255,255,.55); }
-  .item .icon { font-size: 26px; line-height: 1; }
+  .item .icon {
+    font-family: 'Special Elite', monospace;
+    font-size: 22px;
+    color: var(--rose);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
   .item.done { pointer-events: none; opacity: .55; }
   .item.done::after {
     content: '✓';
@@ -372,15 +373,10 @@
     margin-top: 18px;
     text-align: center;
   }
-  .key {
-    font-size: 54px;
-    cursor: pointer;
-    display: inline-block;
-    transition: transform .3s, filter .3s;
-    filter: drop-shadow(0 0 6px rgba(107,31,42,.6));
-  }
+  .key { display: inline-block; cursor: pointer; transition: transform .3s, filter .3s; }
   .key:hover { transform: rotate(-12deg) scale(1.1); }
   .key.locked { filter: grayscale(1) brightness(.5); cursor: not-allowed; }
+  .key svg { display: block; filter: drop-shadow(0 0 6px rgba(107,31,42,.6)); }
 
   /* ===== КОМНАТА ===== */
   #layer4 {
@@ -396,11 +392,18 @@
   .room-item {
     position: absolute;
     cursor: pointer;
-    font-size: 40px;
-    filter: brightness(.25);
-    transition: filter .2s;
+    font-family: 'Special Elite', monospace;
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: rgba(212,197,169,.35);
+    border-bottom: 1px dashed rgba(212,197,169,.2);
+    padding: 2px 4px;
+    transition: color .2s, text-shadow .2s;
   }
-  .room-item:hover { filter: brightness(1.2) drop-shadow(0 0 10px rgba(255,200,100,.5)); }
+  .room-item:hover {
+    color: var(--paper);
+    text-shadow: 0 0 10px rgba(255,200,100,.6);
+  }
   .room-hint {
     position: absolute; bottom: 20px; left: 0; right: 0;
     text-align: center;
@@ -490,11 +493,13 @@
   }
   #screamer.on { display: flex; }
   #screamer .face {
-    font-size: 30vw;
+    font-family: 'IM Fell English', serif;
+    font-size: 40vw;
     color: var(--alert);
     text-shadow: 0 0 40px #ff0000, 0 0 80px #8b0000;
     animation: scream .12s steps(2) infinite;
     filter: contrast(2);
+    line-height: 1;
   }
   @keyframes scream {
     0% { transform: translate(0) scale(1); }
@@ -528,7 +533,7 @@
   }
   #mute:hover { color: var(--paper); border-color: var(--paper); }
 
-  /* ===== ФИНАЛЬНЫЙ ЭКРАН-ЗАТУХАНИЕ ===== */
+  /* ===== ЗАТУХАНИЕ ===== */
   #blackout {
     position: fixed; inset: 0;
     background: #000;
@@ -548,7 +553,6 @@
   }
   #blackout.on span { opacity: 1; }
 
-  /* адаптив */
   @media (max-width: 640px) {
     .paper, .clipping { padding: 26px 20px; }
     .columns { column-count: 1; }
@@ -564,21 +568,19 @@
 </head>
 <body>
 
-<!-- прогресс -->
 <div class="dolls" id="dolls"></div>
-<!-- mute -->
 <button id="mute" aria-label="звук">ЗВУК: ВКЛ</button>
 
 <!-- ================= СЛОЙ 0 — ПИСЬМО ================= -->
 <div class="layer active" id="layer0">
   <div class="paper">
     <div class="typewriter" id="typewriter"></div>
-    <div class="signature">□ sub rosa</div>
+    <div class="signature">sub rosa</div>
     <div class="input-row">
-      <input type="text" id="answer" placeholder="..." autocomplete="off" spellcheck="false" maxlength="40">
-      <button class="stamp-btn" id="submitBtn" title="отправить">□</button>
+      <input type="text" id="answer" placeholder="введи пароль" autocomplete="off" spellcheck="false" maxlength="40">
+      <button class="stamp-btn" id="submitBtn" title="отправить">→</button>
     </div>
-    <div class="hint">добавь к своему комментарию «□», в знак того, что ты осведомлён</div>
+    <div class="hint">пароль — то, чем подписался автор письма</div>
   </div>
 </div>
 
@@ -605,10 +607,10 @@
     <div class="headline" style="font-size:20px;border-bottom:1px solid var(--ink);padding-bottom:8px;">САДОВЫЙ КУЛЬТ · ОПИСЬ ПРЕДМЕТОВ</div>
     <p style="font-size:12.5px;line-height:1.7;margin-top:10px;">Для правильно соблюдённого жертвоприношения необходимо соблюсти порядок. Предметы пронумерованы в описи, но номера стёрлись. Восстанови последовательность ритуала.</p>
     <div class="archive" id="archive">
-      <div class="item" data-order="1"><span class="icon">📜</span>Записка о тайне</div>
-      <div class="item" data-order="2"><span class="icon">🖍️</span>Детский рисунок «телесного испытания»</div>
-      <div class="item" data-order="3"><span class="icon">🌱</span>Схема посадки роз</div>
-      <div class="item" data-order="4"><span class="icon">🌑</span>Календарь с Кровавой Луной</div>
+      <div class="item" data-order="1"><span class="icon">I</span>Записка о тайне</div>
+      <div class="item" data-order="2"><span class="icon">II</span>Детский рисунок «телесного испытания»</div>
+      <div class="item" data-order="3"><span class="icon">III</span>Схема посадки роз</div>
+      <div class="item" data-order="4"><span class="icon">IV</span>Календарь с Кровавой Луной</div>
     </div>
     <div class="order-hint" id="orderHint">порядок: тайна → испытание → посадка → луна</div>
   </div>
@@ -631,7 +633,15 @@
       </div>
     </div>
     <div class="key-zone">
-      <div class="key locked" id="key" title="ключ">🗝️</div>
+      <div class="key locked" id="key" title="ключ">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#6b1f2a" stroke-width="2.5">
+          <circle cx="20" cy="20" r="11"/>
+          <circle cx="20" cy="20" r="4"/>
+          <line x1="28" y1="28" x2="52" y2="52"/>
+          <line x1="44" y1="52" x2="52" y2="44"/>
+          <line x1="38" y1="46" x2="44" y2="40"/>
+        </svg>
+      </div>
       <div class="hint" id="keyHint">ключ не поворачивается, пока дело не собрано</div>
     </div>
   </div>
@@ -640,11 +650,11 @@
 <!-- ================= СЛОЙ 4 — КОМНАТА ================= -->
 <div class="layer" id="layer4">
   <div class="room" id="room">
-    <div class="room-item" style="top:18%;left:12%;" data-correct="0">🪣</div>
-    <div class="room-item" style="top:62%;left:22%;" data-correct="0">🫙</div>
-    <div class="room-item" style="top:30%;left:70%;" data-correct="0">🔧</div>
-    <div class="room-item" style="top:70%;left:68%;" data-correct="1">👜</div>
-    <div class="room-item" style="top:45%;left:45%;" data-correct="0">🪑</div>
+    <div class="room-item" style="top:18%;left:12%;" data-correct="0">ведро</div>
+    <div class="room-item" style="top:62%;left:22%;" data-correct="0">банки</div>
+    <div class="room-item" style="top:30%;left:70%;" data-correct="0">инструменты</div>
+    <div class="room-item" style="top:70%;left:68%;" data-correct="1">мешок</div>
+    <div class="room-item" style="top:45%;left:45%;" data-correct="0">стул</div>
     <div class="room-hint">найди то, что он перетаскивал</div>
   </div>
 </div>
@@ -662,32 +672,31 @@
 <!-- ================= СКРИМЕР ================= -->
 <div id="screamer">
   <div class="flash"></div>
-  <div class="face">☠</div>
+  <div class="face">X</div>
 </div>
 
 <!-- ================= ЗАТУХАНИЕ ================= -->
-<div id="blackout"><span>□ sub rosa</span></div>
+<div id="blackout"><span>sub rosa</span></div>
 
 <script>
-/* ============================================================
-   SUB ROSA — матрёшка на кликах
-   ============================================================ */
 (function () {
   'use strict';
 
-  /* ---------- состояние ---------- */
+  const PASSWORD = 'sub rosa';
+  const TOTAL_LAYERS = 6;
+
   const state = {
     layer: 0,
     errors: 0,
     rosesDone: false,
-    archiveStep: 0,       // 0..4
+    archiveStep: 0,
     archiveDone: false,
     blanksFilled: 0,
     dossierDone: false,
     roomDone: false,
     muted: false
   };
-  const TOTAL_LAYERS = 6;
+
   const $ = (s) => document.querySelector(s);
   const $$ = (s) => document.querySelectorAll(s);
 
@@ -705,27 +714,16 @@
     });
   }
 
-  /* ---------- звук (Web Audio, без файлов) ---------- */
+  /* ---------- звук ---------- */
   let audioCtx = null;
   let humOsc = null, humGain = null;
   function ensureAudio() {
     if (audioCtx) return;
     try {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      // фоновый гул
       humOsc = audioCtx.createOscillator();
       humGain = audioCtx.createGain();
       humOsc.type = 'sine';
       humOsc.frequency.value = 48;
       humGain.gain.value = state.muted ? 0 : 0.025;
-      humOsc.connect(humGain).connect(audioCtx.destination);
-      humOsc.start();
-    } catch (e) { /* нет аудио — не страшно */ }
-  }
-  function beep(freq, dur, type, vol) {
-    if (state.muted) return;
-    ensureAudio();
-    if (!audioCtx) return;
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o
+     
