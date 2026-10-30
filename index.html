@@ -857,6 +857,14 @@
     10% { opacity: 1; }
     100% { transform: translateY(-100%); opacity: 1; }
   }
+  /* ===== КОНФЕТТИ В ТИТРАХ ===== */
+  .confetti {
+    position: absolute;
+    width: 120px;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.9;
+  }
   /* ===== ПРЕЛОАДЕР С РОЗОЙ ===== */
   #preloader {
     position: fixed;
@@ -1122,6 +1130,13 @@
   <!-- ================= СЛОЙ 5c — ХОРОШАЯ КОНЦОВКА ================= -->
 <div class="layer" id="layer5c" style="background:#f0ebe0;">
   <div id="goodEnding" style="position:absolute;inset:0;overflow:hidden;">
+     <!-- конфетти -->
+    <img class="confetti" src="confetti.gif" alt="" style="top:5%;left:5%;">
+    <img class="confetti" src="confetti.gif" alt="" style="top:10%;right:8%;">
+    <img class="confetti" src="confetti.gif" alt="" style="bottom:15%;left:10%;">
+    <img class="confetti" src="confetti.gif" alt="" style="bottom:8%;right:12%;">
+    <img class="confetti" src="confetti.gif" alt="" style="top:45%;left:2%;">
+    <img class="confetti" src="confetti.gif" alt="" style="top:55%;right:3%;">
 <div id="goodScroll" style="position:absolute;left:0;right:0;padding:40px 30px;text-align:center;font-family:'Special Elite',monospace;font-size:16px;line-height:2;color:#1a1512;">
       <p style="font-size:24px;color:#6b1f2a;margin-bottom:30px;">ХОРОШАЯ КОНЦОВКА</p>
       <p>Да. Неплохая была история.</p>
@@ -1154,7 +1169,7 @@
   <!-- ================= АУДИО КОНЦОВОК ================= -->
 <audio id="endingAudio1" src="digital_pain.mp3" preload="auto"></audio>
 <audio id="endingAudio2" src="digital_pain.mp3" preload="auto"></audio>
-<audio id="goodEndingAudio" src="september.mp3" preload="auto"></audio>
+<audio id="goodEndingAudio" src="Earth, Wind & Fire - September.mp3" preload="auto"></audio>
   
 <script>
 (function () {
