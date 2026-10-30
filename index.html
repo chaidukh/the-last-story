@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sub rosa</title>
+<style>
+  /* ===== ПАЛИТРА И БАЗА ===== */
+  :root {
+    --bg: #0d0b0a;
+    --paper: #d4c5a9;
+    --paper-old: #b8a88a;
+    --ink: #1a1512;
+    --rose: #6b1f2a;
+    --garden: #3a4a35;
+    --alert: #8b0000;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--paper);
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    overflow: hidden;
+    cursor: default;
+    user-select: none;
+  }
+  /* деревянный стол */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.012) 0 2px, transparent 2px 6px),
+      radial-gradient(ellipse at 50% 40%, #1a1410 0%, #0d0b0a 70%);
+    z-index: -2;
+  }
+  /* зерно плёнки */
+  body::after {
+    content: '';
+    position: fixed; inset: -50%;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: .07;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
+    animation: grain .4s steps(2) infinite;
+  }
+  @keyframes grain {
+    0% { transform: translate(0,0); }
+    50% { transform: translate(-2%,1%); }
+    100% { transform: translate(1%,-1%); }
+  }
+
+  /* ===== СЛОИ ===== */
+  .layer {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    opacity: 0; visibility: hidden;
+    transform: scale(.1);
+    transition: transform .55s cubic-bezier(.7,0,.3,1), opacity .35s;
+  }
+  .layer.active { opacity: 1; visibility: visible; transform: scale(1); }
+  .layer.exit { transform: scale(.05) rotate(6deg); opacity: 0; }
+
+  /* ===== БУМАГА ===== */
+  .paper {
+    position: relative;
+    background: var(--paper);
+    color: var(--ink);
+    padding: 42px 38px;
+    max-width: 620px;
+    width: 100%;
+    max-height: 86vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,.8), inset 0 0 60px rgba(0,0,0,.18);
+    background-image:
+      repeating-linear-gradient(0deg, transparent 0 2px, rgba(0,0,0,.025) 2px 4px),
+      radial-gradient(circle at 18% 28%, rgba(0,0,0,.07) 0%, transparent 55%),
+      radial-gradient(circle at 82% 72%, rgba(0,0,0,.05) 0%, transparent 50%);
+    transform: rotate(-.6deg);
+  }
+  .paper::-webkit-scrollbar { width: 6px; }
+  .paper::-webkit-scrollbar-thumb { background: rgba(0,0,0,.3); }
+  /* загнутый уголок */
+  .paper::after {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 0 34px 34px 0;
+    border-color: transparent #b8a88a transparent transparent;
+    filter: drop-shadow(-2px 2px 2px rgba(0,0,0,.3));
+  }
+
+  /* ===== ПИСЬМО ===== */
+  .typewriter {
+    font-family: 'Special Elite', 'Courier New', monospace;
+    font-size: 15px;
+    line-height: 1.75;
+    letter-spacing: .2px;
+    white-space: pre-wrap;
+    min-height: 260px;
+  }
+  .typewriter .line { display: block; }
+  .typewriter .line:nth-child(3n) { margin-left: 3px; }
+  .typewriter .line:nth-child(4n) { margin-left: -2px; }
+  .cursor {
+    display: inline-block;
+    width: 8px; height: 16px;
+    background: var(--ink);
+    margin-left: 2px;
+    vertical-align: -2px;
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .signature {
+    font-family: 'Caveat', 'Segoe Script', cursive;
+    font-size: 30px;
+    color: var(--rose);
+    text-align: right;
+    margin-top: 14px;
+    transform: rotate(-2deg);
+  }
+
+  /* поле ввода — строка на бумаге */
+  .input-row {
+    margin-top: 26px;
+    border-bottom: 1px dashed rgba(0,0,0,.35);
+    padding-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .input-row input {
+    flex: 1;
+    background: transparent;
+    border: none; outline: none;
+    font-family: 'Special Elite', monospace;
+    font-size: 16px;
+    color: var(--ink);
+    letter-spacing: 2px;
+    user-select: text;
+  }
+  .stamp-btn {
+    font-family: 'Special Elite', monospace;
+    font-size: 18px;
+    background: transparent;
+    border: 2px solid var(--rose);
+    color: var(--rose);
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    transform: rotate(-6deg);
+    opacity: .75;
+    transition: opacity .2s, transform .2s;
+  }
+  .stamp-btn:hover { opacity: 1; transform: rotate(0deg) scale(1.06); }
+
+  .hint {
+    margin-top: 18px;
+    font-size: 11px;
+    color: rgba(0,0,0,.45);
+    letter-spacing: 1px;
+  }
+
+  /* ===== ГАЗЕТНАЯ ВЫРЕЗКА ===== */
+  .clipping {
+    background: var(--paper-old);
+    padding: 30px 26px;
+    max-width: 640px;
+    width: 100%;
+    max-height: 86vh;
+    overflow-y: auto;
+    transform: rotate(.8deg);
+    box-shadow: 0 18px 50px rgba(0,0,0,.8);
+    clip-path: polygon(0 2%, 3% 0, 97% 1%, 100% 3%, 99% 97%, 96% 100%, 4% 99%, 0 96%);
+    position: relative;
+    color: var(--ink);
+  }
+  .clipping::-webkit-scrollbar { width: 6px; }
+  .clipping::-webkit-scrollbar-thumb { background: rgba(0,0,0,.3); }
+  /* скотч */
+  .tape {
+    position: absolute; top: -12px; left: 50%;
+    width: 120px; height: 26px;
+    background: rgba(220, 200, 150, .55);
+    transform: translateX(-50%) rotate(-2deg);
+    box-shadow: 0 2px 6px rgba(0,0,0,.2);
+    z-index: 5;
+  }
+  .headline {
+    font-family: 'IM Fell English', 'Georgia', serif;
+    font-size: 26px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.15;
+    border-bottom: 3px double var(--ink);
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+    letter-spacing: .5px;
+  }
+  .subhead {
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    opacity: .7;
+  }
+  .columns {
+    column-count: 2;
+    column-gap: 20px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    text-align: justify;
+  }
+  .columns p { margin-bottom: 10px; break-inside: avoid; }
+  .dropcap::first-letter {
+    font-family: 'IM Fell English', serif;
+    font-size: 38px;
+    float: left;
+    line-height: .85;
+    padding: 2px 6px 0 0;
+  }
+  .redacted {
+    background: var(--ink);
+    color: transparent;
+    padding: 0 4px;
+    border-radius: 1px;
+    user-select: none;
+  }
+
+  /* ===== РОЗЫ ===== */
+  .roses {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin: 20px 0 10px;
+    padding: 16px;
+    background: rgba(58,74,53,.12);
+    border: 1px solid rgba(0,0,0,.2);
+  }
+  .rose {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    transition: transform .2s, filter .3s;
+    background: radial-gradient(circle at 35% 35%, #a8324a 0%, #6b1f2a 55%, #3d0f18 100%);
+    box-shadow: inset 0 0 10px rgba(0,0,0,.5), 0 3px 8px rgba(0,0,0,.4);
+  }
+  .rose::before {
+    content: '';
+    position: absolute; inset: 18%;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,.12);
+    border-top-color: transparent;
+    border-left-color: transparent;
+    transform: rotate(20deg);
+  }
+  .rose:hover { transform: scale(1.08); filter: brightness(1.15); }
+  .rose.faded {
+    background: radial-gradient(circle at 35% 35%, #7a5a62 0%, #4a3038 55%, #2a181e 100%);
+    filter: saturate(.3) brightness(.75);
+  }
+  .rose.wrong {
+    animation: wither .5s forwards;
+  }
+  @keyframes wither {
+    0% { transform: scale(1); }
+    40% { transform: scale(.8) rotate(15deg); filter: grayscale(1) brightness(.4); }
+    100% { transform: scale(.3) rotate(45deg); opacity: 0; }
+  }
+  .note {
+    font-family: 'Caveat', cursive;
+    font-size: 19px;
+    color: var(--rose);
+    margin-top: 8px;
+    transform: rotate(-1deg);
+  }
+
+  /* ===== АРХИВ / ПРЕДМЕТЫ ===== */
+  .archive {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-top: 18px;
+  }
+  .item {
+    background: rgba(255,255,255,.35);
+    border: 1px solid rgba(0,0,0,.3);
+    padding: 16px 12px;
+    cursor: pointer;
+    text-align: center;
+    font-family: 'Special Elite', monospace;
+    font-size: 13px;
+    transition: transform .15s, background .2s;
+    position: relative;
+    min-height: 92px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px;
+  }
+  .item:hover { transform: translateY(-3px) rotate(-.5deg); background: rgba(255,255,255,.55); }
+  .item .icon { font-size: 26px; line-height: 1; }
+  .item.done { pointer-events: none; opacity: .55; }
+  .item.done::after {
+    content: '✓';
+    position: absolute; top: 6px; right: 10px;
+    color: var(--garden); font-size: 18px; font-weight: bold;
+  }
+  .item.shake { animation: shake .4s; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+  .order-hint {
+    margin-top: 14px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: rgba(0,0,0,.5);
+    text-align: center;
+  }
+
+  /* ===== ДОСЬЕ ЭШТОНА ===== */
+  .dossier {
+    display: flex; gap: 18px; align-items: flex-start; margin: 14px 0;
+  }
+  .polaroid {
+    flex: 0 0 150px;
+    background: #eee;
+    padding: 8px 8px 30px;
+    transform: rotate(-3deg);
+    box-shadow: 0 6px 16px rgba(0,0,0,.4);
+    position: relative;
+  }
+  .polaroid .photo {
+    width: 100%; aspect-ratio: 1;
+    background: linear-gradient(135deg, #4a4038, #2a2420);
+    filter: sepia(.5) contrast(.9) brightness(.8);
+    position: relative;
+    overflow: hidden;
+  }
+  .polaroid .photo::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8'/%3E%3C/filter%3E%3Crect width='80' height='80' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+  }
+  .polaroid .caption {
+    font-family: 'Caveat', cursive;
+    font-size: 17px;
+    color: #333;
+    text-align: center;
+    margin-top: 6px;
+  }
+  .bio { flex: 1; font-family: 'Special Elite', monospace; font-size: 13.5px; line-height: 1.7; }
+  .blank {
+    display: inline-block;
+    min-width: 70px;
+    border-bottom: 1px solid var(--rose);
+    color: var(--rose);
+    font-family: 'Caveat', cursive;
+    font-size: 18px;
+    text-align: center;
+    cursor: pointer;
+    padding: 0 4px;
+  }
+  .blank.filled { color: var(--garden); border-color: var(--garden); cursor: default; }
+
+  .key-zone {
+    margin-top: 18px;
+    text-align: center;
+  }
+  .key {
+    font-size: 54px;
+    cursor: pointer;
+    display: inline-block;
+    transition: transform .3s, filter .3s;
+    filter: drop-shadow(0 0 6px rgba(107,31,42,.6));
+  }
+  .key:hover { transform: rotate(-12deg) scale(1.1); }
+  .key.locked { filter: grayscale(1) brightness(.5); cursor: not-allowed; }
+
+  /* ===== КОМНАТА ===== */
+  #layer4 {
+    background: #000;
+    cursor: none;
+  }
+  .room {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle 130px at var(--x, 50%) var(--y, 50%), rgba(255,240,200,.12) 0%, rgba(0,0,0,.96) 70%),
+      #050403;
+  }
+  .room-item {
+    position: absolute;
+    cursor: pointer;
+    font-size: 40px;
+    filter: brightness(.25);
+    transition: filter .2s;
+  }
+  .room-item:hover { filter: brightness(1.2) drop-shadow(0 0 10px rgba(255,200,100,.5)); }
+  .room-hint {
+    position: absolute; bottom: 20px; left: 0; right: 0;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,.25);
+    pointer-events: none;
+  }
+
+  /* ===== ФИНАЛ ===== */
+  .final {
+    text-align: center;
+    max-width: 520px;
+  }
+  .final h2 {
+    font-family: 'IM Fell English', serif;
+    font-size: 24px;
+    color: var(--rose);
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+  }
+  .final p { font-size: 14px; line-height: 1.8; margin-bottom: 22px; }
+  .btn {
+    display: inline-block;
+    margin: 6px;
+    padding: 12px 22px;
+    border: 1.5px solid var(--paper);
+    background: transparent;
+    color: var(--paper);
+    font-family: 'Special Elite', monospace;
+    font-size: 13px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+  }
+  .btn:hover { background: var(--paper); color: var(--ink); }
+  .btn.rose { border-color: var(--rose); color: var(--rose); }
+  .btn.rose:hover { background: var(--rose); color: var(--paper); }
+
+  /* ===== ПРОГРЕСС-КУКЛЫ ===== */
+  .dolls {
+    position: fixed;
+    top: 16px; right: 16px;
+    display: flex; gap: 4px;
+    z-index: 9997;
+    opacity: .55;
+    pointer-events: none;
+  }
+  .doll {
+    width: 12px; height: 18px;
+    border-radius: 50% 50% 40% 40%;
+    background: transparent;
+    border: 1.5px solid rgba(212,197,169,.4);
+    position: relative;
+  }
+  .doll::after {
+    content: '';
+    position: absolute; bottom: -3px; left: 50%;
+    transform: translateX(-50%);
+    width: 8px; height: 3px;
+    border-radius: 50%;
+    background: rgba(212,197,169,.25);
+  }
+  .doll.filled { background: var(--rose); border-color: var(--rose); box-shadow: 0 0 8px rgba(107,31,42,.7); }
+
+  /* ===== ГЛИТЧ ===== */
+  .glitch {
+    animation: glitch .35s steps(2);
+  }
+  @keyframes glitch {
+    0% { transform: translate(0); filter: none; }
+    20% { transform: translate(-5px, 2px); filter: hue-rotate(90deg) saturate(2); }
+    40% { transform: translate(5px, -2px); filter: invert(.1); }
+    60% { transform: translate(-3px, 0); filter: hue-rotate(-60deg); }
+    80% { transform: translate(3px, 1px); }
+    100% { transform: translate(0); filter: none; }
+  }
+
+  /* ===== СКРИМЕР ===== */
+  #screamer {
+    position: fixed; inset: 0;
+    background: #000;
+    z-index: 99999;
+    display: none;
+    align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  #screamer.on { display: flex; }
+  #screamer .face {
+    font-size: 30vw;
+    color: var(--alert);
+    text-shadow: 0 0 40px #ff0000, 0 0 80px #8b0000;
+    animation: scream .12s steps(2) infinite;
+    filter: contrast(2);
+  }
+  @keyframes scream {
+    0% { transform: translate(0) scale(1); }
+    50% { transform: translate(-8px, 5px) scale(1.04); }
+    100% { transform: translate(6px, -4px) scale(.98); }
+  }
+  #screamer .flash {
+    position: absolute; inset: 0;
+    background: #8b0000;
+    opacity: 0;
+    animation: flash .18s steps(2) infinite;
+  }
+  @keyframes flash {
+    0%,100% { opacity: 0; }
+    50% { opacity: .35; }
+  }
+
+  /* ===== MUTE ===== */
+  #mute {
+    position: fixed;
+    bottom: 16px; left: 16px;
+    z-index: 9997;
+    background: transparent;
+    border: 1px solid rgba(212,197,169,.3);
+    color: rgba(212,197,169,.6);
+    font-family: 'Special Elite', monospace;
+    font-size: 11px;
+    padding: 6px 10px;
+    cursor: pointer;
+    letter-spacing: 1px;
+  }
+  #mute:hover { color: var(--paper); border-color: var(--paper); }
+
+  /* ===== ФИНАЛЬНЫЙ ЭКРАН-ЗАТУХАНИЕ ===== */
+  #blackout {
+    position: fixed; inset: 0;
+    background: #000;
+    z-index: 99998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 2.5s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #blackout.on { opacity: 1; pointer-events: auto; }
+  #blackout span {
+    font-family: 'Caveat', cursive;
+    font-size: 34px;
+    color: var(--rose);
+    opacity: 0;
+    transition: opacity 1.5s .8s;
+  }
+  #blackout.on span { opacity: 1; }
+
+  /* адаптив */
+  @media (max-width: 640px) {
+    .paper, .clipping { padding: 26px 20px; }
+    .columns { column-count: 1; }
+    .roses { grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 10px; }
+    .dossier { flex-direction: column; align-items: center; }
+    .headline { font-size: 20px; }
+    .archive { grid-template-columns: 1fr; }
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:wght@400;700&family=IM+Fell+English:ital@0;1&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- прогресс -->
+<div class="dolls" id="dolls"></div>
+<!-- mute -->
+<button id="mute" aria-label="звук">ЗВУК: ВКЛ</button>
+
+<!-- ================= СЛОЙ 0 — ПИСЬМО ================= -->
+<div class="layer active" id="layer0">
+  <div class="paper">
+    <div class="typewriter" id="typewriter"></div>
+    <div class="signature">□ sub rosa</div>
+    <div class="input-row">
+      <input type="text" id="answer" placeholder="..." autocomplete="off" spellcheck="false" maxlength="40">
+      <button class="stamp-btn" id="submitBtn" title="отправить">□</button>
+    </div>
+    <div class="hint">добавь к своему комментарию «□», в знак того, что ты осведомлён</div>
+  </div>
+</div>
+
+<!-- ================= СЛОЙ 1 — ГАЗЕТА / РОЗЫ ================= -->
+<div class="layer" id="layer1">
+  <div class="clipping" id="clipping1">
+    <div class="tape"></div>
+    <div class="headline">САДОВНИКИ ИЗ ПРИГОРОДА:<br>«ТИХАЯ ПАРА, ТИХИЙ РАЙ»</div>
+    <div class="subhead">Канада · выпуск от 14 сентября · стр. 3</div>
+    <div class="columns">
+      <p class="dropcap">Розенберги не славились особо примечательной жизнью в этих краях и казались просто милой парой, которая выбрала спокойную жизнь в своём маленьком Раю. Жили они вдали, практически в поле, в своём маленьком доме, окружённом поразительно яркими и пышными розами.</p>
+      <p>Не мудрено — были они садовниками. В их руках и обыкновенная ромашка станет шедевром. Соседи отзываются о паре тепло, хотя <span class="redacted">████████</span> и <span class="redacted">█████</span>.</p>
+      <p>«Они всегда угощали нас вареньем из лепестков», — говорит <span class="redacted">█████████</span>. — «Правда, после той осени мы перестали к ним заходить».</p>
+      <p>Редакция напоминает: если вы располагаете сведениями о <span class="redacted">████████████</span>, сообщите в полицию.</p>
+    </div>
+    <div class="roses" id="roses"></div>
+    <div class="note" id="roseNote">одна из них не должна быть яркой</div>
+  </div>
+</div>
+
+<!-- ================= СЛОЙ 2 — АРХИВ КУЛЬТА ================= -->
+<div class="layer" id="layer2">
+  <div class="paper">
+    <div class="headline" style="font-size:20px;border-bottom:1px solid var(--ink);padding-bottom:8px;">САДОВЫЙ КУЛЬТ · ОПИСЬ ПРЕДМЕТОВ</div>
+    <p style="font-size:12.5px;line-height:1.7;margin-top:10px;">Для правильно соблюдённого жертвоприношения необходимо соблюсти порядок. Предметы пронумерованы в описи, но номера стёрлись. Восстанови последовательность ритуала.</p>
+    <div class="archive" id="archive">
+      <div class="item" data-order="1"><span class="icon">📜</span>Записка о тайне</div>
+      <div class="item" data-order="2"><span class="icon">🖍️</span>Детский рисунок «телесного испытания»</div>
+      <div class="item" data-order="3"><span class="icon">🌱</span>Схема посадки роз</div>
+      <div class="item" data-order="4"><span class="icon">🌑</span>Календарь с Кровавой Луной</div>
+    </div>
+    <div class="order-hint" id="orderHint">порядок: тайна → испытание → посадка → луна</div>
+  </div>
+</div>
+
+<!-- ================= СЛОЙ 3 — ДОСЬЕ ЭШТОНА ================= -->
+<div class="layer" id="layer3">
+  <div class="paper">
+    <div class="headline" style="font-size:19px;border-bottom:1px solid var(--ink);padding-bottom:8px;">ДЕЛО №□ · ЭШТОН РЕДФОРД</div>
+    <div class="dossier">
+      <div class="polaroid">
+        <div class="photo"></div>
+        <div class="caption">он не помнит</div>
+      </div>
+      <div class="bio">
+        <p>Имя изменено. До <span class="blank" data-answer="розенберг">______</span> жил в <span class="blank" data-answer="поле">______</span>.</p>
+        <p>В настоящее время — адвокат в маленьком городе. При нём всегда <span class="blank" data-answer="ключ">______</span>, который вызывает странные чувства.</p>
+        <p>При попытках приблизиться к правде испытывает невыносимую физическую боль. Тело помнит то, что мозг заблокировал.</p>
+        <p style="font-size:11px;opacity:.6;margin-top:10px;">заполни пропуски словами из предыдущих слоёв</p>
+      </div>
+    </div>
+    <div class="key-zone">
+      <div class="key locked" id="key" title="ключ">🗝️</div>
+      <div class="hint" id="keyHint">ключ не поворачивается, пока дело не собрано</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= СЛОЙ 4 — КОМНАТА ================= -->
+<div class="layer" id="layer4">
+  <div class="room" id="room">
+    <div class="room-item" style="top:18%;left:12%;" data-correct="0">🪣</div>
+    <div class="room-item" style="top:62%;left:22%;" data-correct="0">🫙</div>
+    <div class="room-item" style="top:30%;left:70%;" data-correct="0">🔧</div>
+    <div class="room-item" style="top:70%;left:68%;" data-correct="1">👜</div>
+    <div class="room-item" style="top:45%;left:45%;" data-correct="0">🪑</div>
+    <div class="room-hint">найди то, что он перетаскивал</div>
+  </div>
+</div>
+
+<!-- ================= СЛОЙ 5 — ФИНАЛ ================= -->
+<div class="layer" id="layer5">
+  <div class="paper final">
+    <h2>Ты видел. Теперь ты осведомлён.</h2>
+    <p>Эштон так и не вспомнил. Но ты — вспомнил.<br>Роза ждала не его. Она ждала свидетеля.</p>
+    <button class="btn rose" id="keepSecret">СОХРАНИТЬ ТАЙНУ</button>
+    <button class="btn" id="tellTruth">РАССКАЗАТЬ ПРАВДУ</button>
+  </div>
+</div>
+
+<!-- ================= СКРИМЕР ================= -->
+<div id="screamer">
+  <div class="flash"></div>
+  <div class="face">☠</div>
+</div>
+
+<!-- ================= ЗАТУХАНИЕ ================= -->
+<div id="blackout"><span>□ sub rosa</span></div>
+
+<script>
+/* ============================================================
+   SUB ROSA — матрёшка на кликах
+   ============================================================ */
+(function () {
+  'use strict';
+
+  /* ---------- состояние ---------- */
+  const state = {
+    layer: 0,
+    errors: 0,
+    rosesDone: false,
+    archiveStep: 0,       // 0..4
+    archiveDone: false,
+    blanksFilled: 0,
+    dossierDone: false,
+    roomDone: false,
+    muted: false
+  };
+  const TOTAL_LAYERS = 6;
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => document.querySelectorAll(s);
+
+  /* ---------- прогресс-куклы ---------- */
+  const dollsEl = $('#dolls');
+  for (let i = 0; i < TOTAL_LAYERS; i++) {
+    const d = document.createElement('div');
+    d.className = 'doll';
+    d.dataset.i = i;
+    dollsEl.appendChild(d);
+  }
+  function updateDolls() {
+    $$('.doll').forEach((d, i) => {
+      d.classList.toggle('filled', i <= state.layer);
+    });
+  }
+
+  /* ---------- звук (Web Audio, без файлов) ---------- */
+  let audioCtx = null;
+  let humOsc = null, humGain = null;
+  function ensureAudio() {
+    if (audioCtx) return;
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      // фоновый гул
+      humOsc = audioCtx.createOscillator();
+      humGain = audioCtx.createGain();
+      humOsc.type = 'sine';
+      humOsc.frequency.value = 48;
+      humGain.gain.value = state.muted ? 0 : 0.025;
+      humOsc.connect(humGain).connect(audioCtx.destination);
+      humOsc.start();
+    } catch (e) { /* нет аудио — не страшно */ }
+  }
+  function beep(freq, dur, type, vol) {
+    if (state.muted) return;
+    ensureAudio();
+    if (!audioCtx) return;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o
