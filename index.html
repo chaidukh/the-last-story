@@ -5,7 +5,66 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>sub rosa</title>
 <style>
-
+  /* ===== ТРИГГЕР-ВОРНИНГ ===== */
+  #triggerWarning {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 100001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 1;
+    transition: opacity 1.2s ease;
+  }
+  #triggerWarning.hide { opacity: 0; pointer-events: none; }
+  .tw-box {
+    max-width: 520px;
+    width: 100%;
+    border: 1px solid var(--rose);
+    padding: 32px 28px;
+    text-align: center;
+    background: #0d0b0a;
+    box-shadow: 0 0 60px rgba(107,31,42,.3);
+    animation: twPulse 3s ease-in-out infinite;
+  }
+  @keyframes twPulse {
+    0%, 100% { box-shadow: 0 0 60px rgba(107,31,42,.3); }
+    50%      { box-shadow: 0 0 90px rgba(107,31,42,.5); }
+  }
+  .tw-title {
+    font-family: 'IM Fell English', serif;
+    font-size: 22px;
+    letter-spacing: 4px;
+    color: var(--rose);
+    margin-bottom: 22px;
+    text-transform: uppercase;
+  }
+  .tw-text {
+    font-family: 'Special Elite', monospace;
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--paper);
+    letter-spacing: .5px;
+    margin-bottom: 28px;
+  }
+  .tw-text p { margin-bottom: 6px; }
+  #twAccept {
+    font-family: 'Special Elite', monospace;
+    font-size: 14px;
+    letter-spacing: 2px;
+    background: transparent;
+    border: 1.5px solid var(--rose);
+    color: var(--rose);
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+  }
+  #twAccept:hover {
+    background: var(--rose);
+    color: var(--paper);
+  }
   /* ===== ПАЛИТРА И БАЗА ===== */
   :root {
     --bg: #0d0b0a;
@@ -730,7 +789,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:wght@400;700&family=IM+Fell+English:ital@0;1&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
+ <div class="tw-text">
+      <p>Этот сайт содержит </p>
+    <p> внезапные звуки и скримеры;</p>
+      <p style="margin-top:14px;opacity:.7;">Если ты не готов — закрой страницу.</p>
+      <p style="opacity:.7;">Если готов — нажми.</p>
+    </div>
 <div id="preloader">
   <img src="rose.png" alt="" onerror="this.style.display='none'">
 </div>
@@ -918,6 +982,18 @@
 <script>
 (function () {
   'use strict';
+
+  /* ===== ТРИГГЕР-ВОРНИНГ ===== */
+  var tw = document.getElementById('triggerWarning');
+  var twBtn = document.getElementById('twAccept');
+  if (twBtn) {
+    twBtn.addEventListener('click', function () {
+      tw.classList.add('hide');
+      setTimeout(function () { tw.remove(); }, 1300);
+      // запускаем звук после первого клика (политика браузера)
+      try { ensureAudio(); } catch (e) {}
+    });
+  }
 
   /* ===== ПРЕЛОАДЕР ===== */
   window.addEventListener('load', function () {
