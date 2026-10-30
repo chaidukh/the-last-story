@@ -1012,7 +1012,6 @@
       if (n === 1) buildRoses();
       if (n === '0b') initLayer0b();
       if (n === '1b') initLayer1b();
-      if (n === '2b') initLayer2b();
       if (n === 2) resetArchive();
       if (n === 4) initRoom();
     }, 350);
@@ -1247,7 +1246,6 @@
   }
 
   function initRoom() {
-   function initRoom() {
     if (roomInited) return;
     roomInited = true;
     const room = document.getElementById('room');
