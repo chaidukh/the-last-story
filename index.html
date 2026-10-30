@@ -905,7 +905,6 @@
       <p>Я, Долорес Бошар, согласна на ваши условия. Я понимаю, это звучит чудовищно, но у меня нет выбора. Эмили должна учиться.</p>
       <p>Прошу вас: <b>скажите ему, что вы его дедушка и бабушка</b>. Так он не будет задавать вопросов. Я не хочу, чтобы он знал правду.</p>
       <p>Отныне он ваш. <span class="redacted" id="motherRedacted">████████</span></p>
-      <p>P.S. Я уже оплатила первый семестр. Спасибо.</p>
     </div>
     <div class="note" style="margin-top:18px;">нажми на зачёркнутое</div>
   </div>
@@ -975,7 +974,7 @@
       </div>
        <div class="bio">
         <p style="font-size:11px;letter-spacing:1px;opacity:.6;margin-bottom:10px;">ФРАГМЕНТ ДЕЛА · ЧАСТЬ СЛОВ УТРАЧЕНА ПРИ ПЕРЕВОЗКЕ</p>
-        <p>Мальчик передан под опеку семьи <span class="blank" data-answer="розенберг" data-hint="фамилия из газеты" data-options="Розенберг|Редфорд|Эштон">______</span>, проживающей в доме посреди <span class="blank" data-answer="поле" data-hint="место, где росли розы" data-options="поле|город|подвал">______</span>.</p>
+        <p>Мальчик передан под опеку семьи <span class="blank" data-answer="розенберг" data-hint="фамилия из газеты" data-options="Розенберг|Редфорд|Эштон">______</span>, проживающей в доме посреди <span class="blank" data-answer="поля" data-hint="место, где росли розы" data-options="поля|города|леса">______</span>.</p>
         <p>При обыске в его руках был найден <span class="blank" data-answer="ключ" data-hint="предмет, который он хранит до сих пор" data-options="ключ|мешок|нож">______</span> от запертой комнаты. Содержимое комнаты описано в отдельном протоколе.</p>
         <p>Психиатр отмечает: при попытках приблизиться к правде пациент испытывает невыносимую физическую боль.</p>
         <p style="font-size:11px;opacity:.6;margin-top:10px;">нажми на пропуск — появятся слова, которые ты уже видел</p>
@@ -1011,10 +1010,9 @@
     <h2>Теперь ты знаешь правду.</h2>
 <div style="font-family:'Special Elite',monospace;font-size:12px;line-height:1.7;text-align:left;margin:20px 0;border-top:1px solid var(--rose);border-bottom:1px solid var(--rose);padding:14px 0;">
       <p><b>ЧТО СТАЛО С СЕМЬЁЙ:</b></p>
-    <p>Розенберги признаны виновными в убийстве первой степени. Тело было изуродовано до неузнаваемости — отягчающее обстоятельство. Других тел не нашли. Показания единственного свидетеля — невнятные, из-за амнезии.</p>
       <p><b>Долорес Бошар</b> лишена родительских прав. <b>Бернар Бошар</b> ушёл из семьи. <b>Эмили</b> окончила колледж — за счёт тех денег. С братом она больше не виделась.</p>
       <p>Двое младших братьев выросли в приёмных семьях. Им не сказали, что у них был старший брат.</p>
-      <p><b>Мари Бошар</b> стал <b>Эштоном Редфордом</b>. Он до сих пор носит ключ. Он не помнит, от чего.</p>
+      <p><b>Мари Бошар</b> был отдан под опеку социальных работников и стал <b>Эштоном Редфордом</b>.</p>
     </div>
     <button class="btn rose" id="keepSecret">СОХРАНИТЬ ТАЙНУ</button>
     <button class="btn" id="tellTruth">РАССКАЗАТЬ ПРАВДУ</button>
@@ -1025,6 +1023,9 @@
 <!-- ================= СЛОЙ 5b — ЛОВУШКА ================= -->
 <div class="layer" id="layer5b">
   <div id="trapRoom" style="position:absolute;inset:0;background:#000;cursor:none;overflow:hidden;">
+      <div id="trapRoom" ...>
+    <!-- фон sky.png -->
+    <div id="trapSky"></div>
     <!-- фонарик -->
     <div id="trapLight" style="position:absolute;inset:0;pointer-events:none;
          background:radial-gradient(circle 140px at var(--tx,50%) var(--ty,50%),
@@ -1106,6 +1107,22 @@
       setTimeout(function () { twEl.remove(); }, 1300);
       try { ensureAudio(); } catch (e) {}
     });
+  }
+    /* ===== ФОН SKY.PNG В ЛОВУШКЕ ===== */
+  #trapSky {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    background-image: url('sky.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 3s ease;
+    z-index: 1;
+    pointer-events: none;
+  }
+  #trapSky.show {
+    opacity: 0.6;
   }
   /* ===== ПРЕЛОАДЕР ===== */
   window.addEventListener('load', function () {
@@ -1703,7 +1720,9 @@ document.getElementById('tellTruth').addEventListener('click', function () {
 
     document.getElementById('giveKey').addEventListener('click', function () {
       choice.style.display = 'none';
-      txt.innerHTML = 'Ты протягиваешь ключ.<br><br>Они начинают кричать, чтобы ты сказал, где ключ.<br><br>Но тебе очень страшно и холодно...';
+      var sky = document.getElementById('trapSky');
+      if (sky) sky.classList.add('show');
+      txt.innerHTML = 'Ты не хочешь отдавать им ключ, тебе очень страшно.<br><br>Они начинают кричать, чтобы ты сказал, где ключ.<br><br>Но тебе очень страшно и холодно...';
       txt.style.opacity = '1';
       beep(60, 2, 'sawtooth', 0.1);
       endTrap();
@@ -1711,7 +1730,9 @@ document.getElementById('tellTruth').addEventListener('click', function () {
 
     document.getElementById('keepKey').addEventListener('click', function () {
       choice.style.display = 'none';
-      txt.innerHTML = 'Ты сжимаешь ключ в руке.<br><br>Они начинают кричать, чтобы ты сказал, где ключ.<br><br>Но тебе очень страшно и холодно...';
+      var sky = document.getElementById('trapSky');
+      if (sky) sky.classList.add('show');
+      txt.innerHTML = 'Ты сжимаешь ключ в руке.<br><br>Они начинают кричать, чтобы ты сказал, где он.<br><br>Но тебе очень страшно и холодно...';
       txt.style.opacity = '1';
       beep(60, 2, 'sawtooth', 0.1);
       endTrap();
