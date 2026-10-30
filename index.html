@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>sub rosa</title>
 <style>
+    body {
+    opacity: 0;
+    transition: opacity 1.2s ease;
+  }
+  body.loaded { opacity: 1; }
   /* ===== ПАЛИТРА И БАЗА ===== */
   :root {
     --bg: #0d0b0a;
@@ -561,13 +566,36 @@
     .headline { font-size: 20px; }
     .archive { grid-template-columns: 1fr; }
   }
+    /* ===== ПРЕЛОАДЕР С РОЗОЙ ===== */
+  #preloader {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    transition: opacity 1s ease;
+  }
+  #preloader.hide { opacity: 0; pointer-events: none; }
+  #preloader img {
+    width: 180px;
+    filter: grayscale(40%) brightness(0.9);
+    animation: breathe 3s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.5; transform: scale(0.98); }
+    50%      { opacity: 1;   transform: scale(1.02); }
+  }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:wght@400;700&family=IM+Fell+English:ital@0;1&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
+<div id="preloader">
+  <img src="rose.png" alt="">
+</div>
 <div class="dolls" id="dolls"></div>
 <button id="mute" aria-label="звук">ЗВУК: ВКЛ</button>
 
@@ -682,6 +710,11 @@
 (function () {
   'use strict';
 
+    // Прелоадер
+  setTimeout(() => {
+    document.getElementById('preloader').classList.add('hide');
+    document.body.classList.add('loaded');
+  }, 1800);
   const PASSWORD = 'sub rosa';
   const TOTAL_LAYERS = 6;
 
