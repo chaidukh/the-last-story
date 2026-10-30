@@ -384,6 +384,109 @@
   .key.locked { filter: grayscale(1) brightness(.5); cursor: not-allowed; }
   .key svg { display: block; filter: drop-shadow(0 0 6px rgba(107,31,42,.6)); }
 
+   /* ===== ПРОПУСКИ В ДЕЛЕ ===== */
+  .blank {
+    position: relative;
+    border-bottom: 1px dashed var(--rose);
+    color: var(--rose);
+    padding: 0 6px;
+    cursor: pointer;
+    font-family: 'Caveat', cursive;
+    font-size: 18px;
+    transition: color .2s, background .2s;
+  }
+  .blank:hover { background: rgba(107,31,42,.08); }
+  .blank.filled {
+    color: var(--garden);
+    border-bottom-color: var(--garden);
+    background: rgba(58,74,53,.1);
+    border-radius: 2px;
+    cursor: default;
+  }
+  .blank::after {
+    content: attr(data-hint);
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: #1a141b;
+    color: var(--paper);
+    border: 1px solid #2c212e;
+    font-family: 'Special Elite', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 4px 8px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s, transform .2s;
+    z-index: 60;
+  }
+  .blank:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .blank.filled::after { display: none; }
+
+  .blank-options {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 6px;
+    background: #1a141b;
+    border: 1px solid var(--rose);
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 70;
+    box-shadow: 0 8px 20px rgba(0,0,0,.6);
+    min-width: 160px;
+  }
+  .blank-options button {
+    background: transparent;
+    border: none;
+    color: var(--paper);
+    font-family: 'Special Elite', monospace;
+    font-size: 13px;
+    letter-spacing: .5px;
+    padding: 6px 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: background .15s, color .15s;
+  }
+  .blank-options button:hover {
+    background: var(--rose);
+    color: var(--paper);
+  }
+    /* ===== ПОДМЕНА ПОДПИСИ В АРХИВЕ ===== */
+  .item .item-text {
+    display: inline-block;
+    transition: color .15s, transform .15s;
+  }
+  .item.revealed {
+    background: rgba(107,31,42,.15);
+    border-color: var(--rose);
+  }
+  .item.revealed .item-text {
+    color: var(--rose);
+    font-weight: bold;
+    letter-spacing: 1px;
+    animation: revealShake .35s;
+  }
+  @keyframes revealShake {
+    0%   { transform: translateX(0) scale(1); }
+    20%  { transform: translateX(-4px) scale(1.05); }
+    40%  { transform: translateX(4px) scale(1.05); }
+    60%  { transform: translateX(-2px) scale(1.02); }
+    80%  { transform: translateX(2px) scale(1.02); }
+    100% { transform: translateX(0) scale(1); }
+  }
+  .item.revealed .icon {
+    color: var(--alert);
+    text-shadow: 0 0 8px rgba(139,0,0,.6);
+  }
   /* ===== КОМНАТА ===== */
   #layer4 {
     background: #000;
@@ -638,15 +741,33 @@
   <div class="paper">
     <div class="headline" style="font-size:20px;border-bottom:1px solid var(--ink);padding-bottom:8px;">САДОВЫЙ КУЛЬТ · ОПИСЬ ПРЕДМЕТОВ</div>
     <p style="font-size:12.5px;line-height:1.7;margin-top:10px;">Для правильно соблюдённого жертвоприношения необходимо соблюсти порядок. Предметы пронумерованы в описи, но номера стёрлись. Восстанови последовательность ритуала.</p>
-    <div class="archive" id="archive">
-      <div class="item" data-order="1"><span class="icon">I</span>Записка о тайне</div>
-      <div class="item" data-order="2"><span class="icon">II</span>Детский рисунок «телесного испытания»</div>
-      <div class="item" data-order="3"><span class="icon">III</span>Схема посадки роз</div>
-      <div class="item" data-order="4"><span class="icon">IV</span>Календарь с Кровавой Луной</div>
+ <div class="archive" id="archive">
+      <div class="item" data-order="1"
+           data-innocent="Секрет"
+           data-terrible="ТАЙНА">
+        <span class="icon">I</span>
+        <span class="item-text">Секрет</span>
+      </div>
+      <div class="item" data-order="2"
+           data-innocent="Игра в прятки"
+           data-terrible="ТЕЛЕСНОЕ ИСПЫТАНИЕ">
+        <span class="icon">II</span>
+        <span class="item-text">Игра в прятки</span>
+      </div>
+      <div class="item" data-order="3"
+           data-innocent="Посадка цветов"
+           data-terrible="ПОДНОШЕНИЕ ПОД КУСТАМИ">
+        <span class="icon">III</span>
+        <span class="item-text">Посадка цветов</span>
+      </div>
+      <div class="item" data-order="4"
+           data-innocent="Красная луна"
+           data-terrible="КРОВАВАЯ ЛУНА">
+        <span class="icon">IV</span>
+        <span class="item-text">Красная луна</span>
+      </div>
     </div>
-    <div class="order-hint" id="orderHint">порядок: тайна → испытание → посадка → луна</div>
-  </div>
-</div>
+    <div class="order-hint" id="orderHint">нажми на каждый предмет — но не удивляйся, если подпись изменится</div>
 
 <!-- ================= СЛОЙ 3 — ДОСЬЕ ЭШТОНА ================= -->
 <div class="layer" id="layer3">
@@ -657,13 +778,13 @@
         <div class="photo"></div>
         <div class="caption">он не помнит</div>
       </div>
-      <div class="bio">
-        <p>Имя изменено. До <span class="blank" data-answer="розенберг">______</span> жил в <span class="blank" data-answer="поле">______</span>.</p>
-        <p>В настоящее время — адвокат в маленьком городе. При нём всегда <span class="blank" data-answer="ключ">______</span>, который вызывает странные чувства.</p>
-        <p>При попытках приблизиться к правде испытывает невыносимую физическую боль. Тело помнит то, что мозг заблокировал.</p>
-        <p style="font-size:11px;opacity:.6;margin-top:10px;">заполни пропуски словами из предыдущих слоёв</p>
+       <div class="bio">
+        <p style="font-size:11px;letter-spacing:1px;opacity:.6;margin-bottom:10px;">ФРАГМЕНТ ДЕЛА · ЧАСТЬ СЛОВ УТРАЧЕНА ПРИ ПЕРЕВОЗКЕ</p>
+        <p>Мальчик передан под опеку семьи <span class="blank" data-answer="розенберг" data-hint="фамилия из газеты" data-options="Розенберг|Редфорд|Эштон">______</span>, проживающей в <span class="blank" data-answer="поле" data-hint="место, где росли розы" data-options="поле|город|подвал">______</span>.</p>
+        <p>При обыске изъят <span class="blank" data-answer="ключ" data-hint="предмет, который он хранит до сих пор" data-options="ключ|мешок|нож">______</span> от запертой комнаты. Содержимое комнаты описано в отдельном протоколе.</p>
+        <p>Психиатр отмечает: при попытках приблизиться к правде пациент испытывает невыносимую физическую боль. Тело помнит то, что мозг заблокировал.</p>
+        <p style="font-size:11px;opacity:.6;margin-top:10px;">нажми на пропуск — появятся слова, которые ты уже видел</p>
       </div>
-    </div>
     <div class="key-zone">
       <div class="key locked" id="key" title="ключ">
         <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#6b1f2a" stroke-width="2.5">
@@ -903,50 +1024,80 @@
     state.archiveStep = 0;
     state.archiveDone = false;
     $$('#archive .item').forEach(function (it) {
-      it.classList.remove('done');
+      it.classList.remove('done', 'revealed');
+      var txt = it.querySelector('.item-text');
+      if (txt) txt.textContent = it.dataset.innocent;
     });
   }
+
   $$('#archive .item').forEach(function (item) {
     item.addEventListener('click', function () {
-      const order = parseInt(this.dataset.order, 10);
-      if (order === state.archiveStep + 1) {
-        this.classList.add('done');
-        state.archiveStep++;
-        beep(330 + state.archiveStep * 40, 0.12, 'sine', 0.05);
-        if (state.archiveStep === 4) {
-          state.archiveDone = true;
-          setTimeout(function () { goTo(3); }, 600);
-        }
-      } else {
-        this.classList.add('shake');
-        glitch(document.querySelector('#layer2 .paper'));
-        state.errors++;
-        beep(90, 0.2, 'square', 0.08);
-        if (state.errors >= 3) { screamer(); state.errors = 0; }
-        const self = this;
-        setTimeout(function () { self.classList.remove('shake'); }, 450);
+      if (this.classList.contains('done')) return;
+
+      // мгновенная подмена подписи
+      var txt = this.querySelector('.item-text');
+      if (txt) txt.textContent = this.dataset.terrible;
+      this.classList.add('revealed', 'done');
+      this.dataset.order = this.dataset.order; // no-op, чтобы не потерять
+
+      beep(80, 0.25, 'sawtooth', 0.08);
+      state.archiveStep++;
+
+      if (state.archiveStep >= 4) {
+        state.archiveDone = true;
+        setTimeout(function () { goTo(3); }, 900);
       }
     });
   });
 
   /* ---------- досье ---------- */
+  function closeAllOptions() {
+    $$('.blank-options').forEach(function (o) { o.remove(); });
+  }
+
   $$('#layer3 .blank').forEach(function (b) {
-    b.addEventListener('click', function () {
+    b.addEventListener('click', function (e) {
+      e.stopPropagation();
       if (this.classList.contains('filled')) return;
-      const ans = prompt('впиши слово:');
-      if (ans && normalize(ans).indexOf(this.dataset.answer) === 0) {
-        this.textContent = ans.trim();
-        this.classList.add('filled');
-        state.blanksFilled++;
-        beep(440, 0.12, 'sine', 0.05);
-        if (state.blanksFilled >= 3) unlockKey();
-      } else if (ans) {
-        glitch(document.querySelector('#layer3 .paper'));
-        beep(100, 0.2, 'square', 0.08);
-        state.errors++;
-        if (state.errors >= 3) { screamer(); state.errors = 0; }
-      }
+      closeAllOptions();
+
+      const self = this;
+      const options = (this.dataset.options || '').split('|').filter(Boolean);
+      if (options.length === 0) return;
+
+      const box = document.createElement('div');
+      box.className = 'blank-options';
+
+      options.forEach(function (opt) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = opt;
+        btn.addEventListener('click', function (ev) {
+          ev.stopPropagation();
+          if (opt.toLowerCase() === String(self.dataset.answer).toLowerCase()) {
+            self.textContent = opt;
+            self.classList.add('filled');
+            state.blanksFilled++;
+            beep(440, 0.12, 'sine', 0.05);
+            closeAllOptions();
+            if (state.blanksFilled >= 3) unlockKey();
+          } else {
+            glitch(document.querySelector('#layer3 .paper'));
+            beep(100, 0.2, 'square', 0.08);
+            state.errors++;
+            if (state.errors >= 3) { screamer(); state.errors = 0; }
+            closeAllOptions();
+          }
+        });
+        box.appendChild(btn);
+      });
+
+      this.appendChild(box);
     });
+  });
+
+  document.addEventListener('click', function () {
+    closeAllOptions();
   });
   function unlockKey() {
     const k = document.getElementById('key');
