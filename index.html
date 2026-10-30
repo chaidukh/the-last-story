@@ -990,8 +990,12 @@
 (function () {
   'use strict';
   <!-- ================= АУДИО КОНЦОВОК ================= -->
-<audio id="endingAudio1" src="limbus vita - digital_pain -v 96.969%" preload="auto"></audio>
-<audio id="endingAudio2" src="limbus vita - digital_pain -v 96.969%" preload="auto"></audio>
+<audio id="endingAudio1" src="digital_pain.mp3" preload="auto"></audio>
+<audio id="endingAudio2" src="digital_pain.mp3" preload="auto"></audio>
+  
+<script>
+(function () {
+  'use strict';
 
   /* ===== ТРИГГЕР-ВОРНИНГ ===== */
  var twEl = document.getElementById('triggerWarning');
@@ -1405,7 +1409,7 @@
     if (window._ambientNoiseGain) window._ambientNoiseGain.gain.value = 0;
 
     // запускаем аудио концовки
-    var audio = document.getElementById('digital_pain -v 96.969%" preload');
+    var audio = document.getElementById('digital_pain" preload');
     if (audio) {
       audio.volume = 0.7;
       audio.play().catch(function () {});
@@ -1439,7 +1443,7 @@ document.getElementById('tellTruth').addEventListener('click', function () {
     if (window._ambientNoiseGain) window._ambientNoiseGain.gain.value = 0;
 
     // запускаем аудио концовки
-    var audio = document.getElementById('digital_pain -v 96.969%" preload');
+    var audio = document.getElementById('digital_pain');
     if (audio) {
       audio.volume = 0.7;
       audio.play().catch(function () {});
