@@ -733,6 +733,41 @@
     archiveStep: 0,
     archiveDone: false,
     blanksFilled: 0,
+    dossierDone: false,
+    roomDone: false,
+    muted: false
+  };
+  
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => document.querySelectorAll(s);
+  /* ---------- прогресс-куклы ---------- */
+  const dollsEl = $('#dolls');
+  for (let i = 0; i < TOTAL_LAYERS; i++) {
+    const d = document.createElement('div');
+    d.className = 'doll';
+    d.dataset.i = i;
+    dollsEl.appendChild(d);
+  }
+  function updateDolls() {
+    $$('.doll').forEach(function (d, i) {
+      d.classList.toggle('filled', i <= state.layer);
+    });
+  }
+
+  /* ---------- звук ---------- */
+  let audioCtx = null;
+  let humOsc = null, humGain = null;
+  function ensureAudio() {
+    if (audioCtx) return;
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      humOsc = audioCtx.createOscillator();
+      humGain = audioCtx.createGain();
+      humOsc.type = 'sine';
+      humOsc.frequency.value = 48;
+      humGain.gain.value = state.muted ? 0 : 0.025;
+      humOsc.connect(humGain).connect(audioCtx.destination);
+      humOsc.start();
     } catch (e) {}
   }
   function beep(freq, dur, type, vol) {
