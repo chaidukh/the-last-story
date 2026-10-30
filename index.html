@@ -880,7 +880,7 @@
  <div class="archive" id="archive">
       <div class="item" data-order="1"
            data-innocent="Секрет"
-           data-terrible="ТАЙНА">
+           data-terrible="SUB ROSA">
         <span class="icon">I</span>
         <span class="item-text">Секрет</span>
       </div>
@@ -892,12 +892,12 @@
       </div>
       <div class="item" data-order="3"
            data-innocent="Посадка цветов"
-           data-terrible="ПОДНОШЕНИЕ ПОД КУСТАМИ">
+           data-terrible=";ЖЕРТВОПРИНОШЕНИЕ">
         <span class="icon">III</span>
         <span class="item-text">Посадка цветов</span>
       </div>
       <div class="item" data-order="4"
-           data-innocent="Красная луна"
+           data-innocent="ночь"
            data-terrible="КРОВАВАЯ ЛУНА">
         <span class="icon">IV</span>
         <span class="item-text">Красная луна</span>
@@ -913,7 +913,8 @@
     <div class="headline" style="font-size:19px;border-bottom:1px solid var(--ink);padding-bottom:8px;">ДЕЛО №□ · ЭШТОН РЕДФОРД</div>
     <div class="dossier">
       <div class="polaroid">
-        <div class="photo"></div>
+        <img src="mari.png" alt=""
+             style="width:100%;aspect-ratio:1;object-fit:cover;filter:sepia(.5) contrast(.9) brightness(.8);display:block;">
         <div class="caption">он не помнит</div>
       </div>
        <div class="bio">
@@ -952,7 +953,7 @@
   <div class="layer" id="layer5">
   <div class="paper final">
     <h2>Теперь ты знаешь правду.</h2>
-    <div style="font-family:'Special Elite',monospace;font-size:12px;line-height:1.7;text-align:left;margin:20px 0;border-top:1px solid var(--rose);border-bottom:1px solid var(--rose);padding:14px 0;">
+    <div style="font-family:'Special Elite',monospace;font-size:12px;line-height:1.7;text-align:left;mar(--rose);border-bottom:1px solid var(--rose);padding:14px 0;">rgin:20px 0;border-top:1px solid va
       <p><b>ЧТО СТАЛО С СЕМЬЁЙ:</b></p>
     <p>Розенберги признаны виновными в убийстве первой степени. Тело было изуродовано до неузнаваемости — отягчающее обстоятельство. Других тел не нашли. Показания единственного свидетеля — невнятные, из-за амнезии.</p>
       <p><b>Долорес Бошар</b> лишена родительских прав. <b>Бернар Бошар</b> ушёл из семьи. <b>Эмили</b> окончила колледж — за счёт тех денег. С братом она больше не виделась.</p>
@@ -1044,17 +1045,39 @@
   /* ---------- звук ---------- */
   let audioCtx = null;
   let humOsc = null, humGain = null;
-  function ensureAudio() {
+ function ensureAudio() {
     if (audioCtx) return;
     try {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+      // низкий гул (эмбиент)
       humOsc = audioCtx.createOscillator();
       humGain = audioCtx.createGain();
       humOsc.type = 'sine';
       humOsc.frequency.value = 48;
-      humGain.gain.value = state.muted ? 0 : 0.025;
+      humGain.gain.value = state.muted ? 0 : 0.04;
       humOsc.connect(humGain).connect(audioCtx.destination);
       humOsc.start();
+
+      // второй слой — лёгкий шум ветра
+      var noiseBuf = audioCtx.createBuffer(1, audioCtx.sampleRate * 2, audioCtx.sampleRate);
+      var data = noiseBuf.getChannelData(0);
+      for (var i = 0; i < data.length; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.5;
+      }
+      var noise = audioCtx.createBufferSource();
+      noise.buffer = noiseBuf;
+      noise.loop = true;
+      var noiseFilter = audioCtx.createBiquadFilter();
+      noiseFilter.type = 'lowpass';
+      noiseFilter.frequency.value = 400;
+      var noiseGain = audioCtx.createGain();
+      noiseGain.gain.value = state.muted ? 0 : 0.015;
+      noise.connect(noiseFilter).connect(noiseGain).connect(audioCtx.destination);
+      noise.start();
+
+      // сохраняем для mute
+      window._ambientNoiseGain = noiseGain;
     } catch (e) {}
   }
   function beep(freq, dur, type, vol) {
@@ -1073,9 +1096,9 @@
   document.getElementById('mute').addEventListener('click', function () {
     state.muted = !state.muted;
     this.textContent = state.muted ? 'ЗВУК: ВЫКЛ' : 'ЗВУК: ВКЛ';
-    if (humGain) humGain.gain.value = state.muted ? 0 : 0.025;
+    if (humGain) humGain.gain.value = state.muted ? 0 : 0.04;
+    if (window._ambientNoiseGain) window._ambientNoiseGain.gain.value = state.muted ? 0 : 0.015;
   });
-
   /* ---------- переходы ---------- */
   function goTo(n) {
     if (n === state.layer) return;
@@ -1374,6 +1397,25 @@
     const b = document.getElementById('blackout');
     b.classList.add('on');
     beep(60, 2, 'sine', 0.04);
+
+    var rosaSpan = b.querySelector('span');
+    if (rosaSpan) rosaSpan.style.opacity = '0';
+
+    setTimeout(function () {
+      var info = document.createElement('div');
+      info.style.cssText = 'max-width:600px;text-align:center;line-height:1.8;font-family:"Special Elite",monospace;font-size:13px;color:#d4c5a9;opacity:0;transition:opacity 1.5s;padding:0 20px;';
+      info.innerHTML = 'Эштон так ничего и не вспомнил и живёт счастливую жизнь в неведении.<br><br>Но теперь эта правда обременяет лишь Вас...<br>И Розенбергов, вышедших на свободу.';
+      b.appendChild(info);
+      setTimeout(function () { info.style.opacity = '1'; }, 100);
+
+      setTimeout(function () {
+        var sign = document.createElement('div');
+        sign.style.cssText = 'margin-top:30px;font-family:"Caveat",cursive;font-size:30px;color:#6b1f2a;opacity:0;transition:opacity 1.5s;';
+        sign.textContent = 'sub rosa';
+        b.appendChild(sign);
+        setTimeout(function () { sign.style.opacity = '1'; }, 100);
+      }, 2500);
+    }, 2600);
   });
 document.getElementById('tellTruth').addEventListener('click', function () {
     const b = document.getElementById('blackout');
@@ -1385,10 +1427,10 @@ document.getElementById('tellTruth').addEventListener('click', function () {
       // добавляем новый текст, не трогая sub rosa
       var info = document.createElement('div');
       info.style.cssText = 'max-width:600px;text-align:center;line-height:1.6;font-family:"Special Elite",monospace;font-size:13px;color:#d4c5a9;opacity:0;transition:opacity 1.5s;';
-      info.innerHTML = 'ДЕЛО РОЗЕНБЕРГОВ.<br>Садовники приговорены.<br>Имя ребёнка изменено.<br>Настоящее имя скрыто в исходном коде этой страницы.';
+      info.innerHTML =Он узнал правду, от которой ему стало плохо.<br><br>Но он не остановился на этом... Не смирился с этой правдой и начал искать Розенбергов.<br><br><span style="color:#6b1f2a;font-weight:bold;">И это было последнее, что он сделал.</span>';
       b.appendChild(info);
       setTimeout(function () { info.style.opacity = '1'; }, 100);
-      console.log('%cЭШТОН РЕДФОРД — не настоящее имя.', 'color:#6b1f2a;font-size:14px;');
+      console.log('%cЭШТОН РЕДФОРД', 'color:#6b1f2a;font-size:14px;');
     }, 2600);
   });
 
