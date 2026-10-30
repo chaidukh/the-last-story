@@ -1152,14 +1152,13 @@
 (function () {
   'use strict';
   /* ===== ПРЕЛОАДЕР ===== */
-  window.addEventListener('load', function () {
+    window.addEventListener('load', function () {
     setTimeout(function () {
       var pre = document.getElementById('preloader');
       if (pre) pre.classList.add('hide');
       document.body.classList.add('loaded');
     }, 3600);
   });
-
   /* ===== ТРИГГЕР-ВОРНИНГ ===== */
  var twEl = document.getElementById('triggerWarning');
   var twBtn = document.getElementById('twAccept');
