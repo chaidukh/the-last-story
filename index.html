@@ -1609,6 +1609,8 @@ document.getElementById('tellTruth').addEventListener('click', function () {
       }
       state.layer = '5b';
       updateDolls();
+      console.log('layer5b:', document.getElementById('layer5b'));
+      console.log('startTrap:', typeof startTrap);
       setTimeout(function () { startTrap(); }, 700);
     } else {
       glitch(document.querySelector('#layer5 .paper'));
