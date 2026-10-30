@@ -1080,6 +1080,25 @@
     </div>
     </div>
   </div>
+  <!-- ================= СЛОЙ 5c — ХОРОШАЯ КОНЦОВКА ================= -->
+<div class="layer" id="layer5c" style="background:#f0ebe0;">
+  <div id="goodEnding" style="position:absolute;inset:0;overflow:hidden;">
+    <div id="goodScroll" style="position:absolute;left:0;right:0;padding:40px 30px;text-align:center;font-family:'Special Elite',monospace;font-size:16px;line-height:2;color:#1a1512;opacity:0;transition:opacity 2s;">
+      <p style="font-size:24px;color:#6b1f2a;margin-bottom:30px;">ХОРОШАЯ КОНЦОВКА</p>
+      <p>Да. Неплохая была история.</p>
+      <p>Эштону стало так плевать, что он наконец-то сосредоточился на настоящем.</p>
+      <p>Он стал делать успехи в адвокатской карьере.</p>
+      <p>Он разбогател и даже купил себе красивый дом.</p>
+      <p>Наконец-то его начали уважать, у него появилось много друзей.</p>
+      <p>Да-да, ему было чётко, чуваки.</p>
+      <p style="margin-top:30px;color:#6b1f2a;">Всех с тыквенным спасом и спасибо за прохождение.</p>
+      <p>Я надеюсь, вы не станете проходить на плохие концовки — всё-таки там страшно и не круто.</p>
+      <p>Ладно, всем спасибо. Чмоки-чмоки.</p>
+      <p style="margin-top:30px;font-family:'Caveat',cursive;font-size:22px;color:#6b1f2a;">Обязательно поделитесь вашим прохождением.</p>
+      <p style="margin-top:40px;font-size:11px;opacity:.5;">sub rosa · хорошая концовка</p>
+    </div>
+  </div>
+</div>
 <!-- ================= СКРИМЕР ================= -->
   <div id="idle-room-text"></div>
 <div id="screamer">
@@ -1093,6 +1112,7 @@
   <!-- ================= АУДИО КОНЦОВОК ================= -->
 <audio id="endingAudio1" src="digital_pain.mp3" preload="auto"></audio>
 <audio id="endingAudio2" src="digital_pain.mp3" preload="auto"></audio>
+<audio id="goodEndingAudio" src="september.mp3" preload="auto"></audio>
   
 <script>
 (function () {
@@ -1123,6 +1143,21 @@
   }
   #trapSky.show {
     opacity: 0.6;
+  }
+    /* ===== ХОРОШАЯ КОНЦОВКА ===== */
+  #layer5c.active {
+    background: #f0ebe0 !important;
+  }
+  #goodEnding {
+    background: #f0ebe0;
+  }
+  #goodScroll {
+    animation: scrollUp 40s linear forwards;
+  }
+  @keyframes scrollUp {
+    0% { transform: translateY(100vh); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translateY(-100%); opacity: 1; }
   }
   /* ===== ПРЕЛОАДЕР ===== */
   window.addEventListener('load', function () {
@@ -1542,6 +1577,13 @@
         b.appendChild(sign);
         setTimeout(function () { sign.style.opacity = '1'; }, 100);
       }, 2500);
+            setTimeout(function () {
+        var hint = document.createElement('div');
+        hint.style.cssText = 'margin-top:40px;font-family:"Special Elite",monospace;font-size:11px;color:#d4c5a9;opacity:0;transition:opacity 2s;letter-spacing:2px;';
+        hint.innerHTML = '<span style="color:#6b1f2a;">еэдусфэ нояш</span>';
+        b.appendChild(hint);
+        setTimeout(function () { hint.style.opacity = '0.5'; }, 100);
+      }, 5000);
     }, 2600);
   });
 document.getElementById('tellTruth').addEventListener('click', function () {
@@ -1613,6 +1655,31 @@ document.getElementById('tellTruth').addEventListener('click', function () {
   /* ---------- код ---------- */
   document.getElementById('findCode').addEventListener('click', function () {
     var code = prompt('введи код:');
+        if (code && code.toLowerCase().trim() === 'выбрось ключ') {
+      // хорошая концовка
+      var l5 = document.getElementById('layer5');
+      var l5c = document.getElementById('layer5c');
+      if (l5) { l5.classList.remove('active'); }
+      if (l5c) { l5c.classList.add('active'); }
+      state.layer = '5c';
+      updateDolls();
+          // запускаем september.mp3
+      var goodAudio = document.getElementById('goodEndingAudio');
+      if (goodAudio) {
+        goodAudio.volume = 0.7;
+        goodAudio.currentTime = 0;
+        goodAudio.play().catch(function () {});
+      }
+      // запускаем анимацию текста
+      setTimeout(function () {
+        var scroll = document.getElementById('goodScroll');
+        if (scroll) { scroll.style.animation = 'scrollUp 40s linear forwards'; }
+      }, 100);
+      // останавливаем эмбиент, запускаем светлый звук
+      if (humGain) humGain.gain.value = 0;
+      if (window._ambientNoiseGain) window._ambientNoiseGain.gain.value = 0;
+      return;
+    }
     if (code && code.toLowerCase().trim() === 'ключ от подвала') {
       // принудительно показываем 5b
       var l5 = document.getElementById('layer5');
