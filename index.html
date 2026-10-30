@@ -839,6 +839,46 @@
     0%, 100% { opacity: 0.5; transform: scale(0.98); }
     50%      { opacity: 1;   transform: scale(1.02); }
   }
+     /* ===== ФОН SKY.PNG В ЛОВУШКЕ ===== */
+  #trapSky {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    background-image: url('sky.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 3s ease;
+    z-index: 1;
+    pointer-events: none;
+  }
+  #trapSky.show {
+    opacity: 0.6;
+  }
+    /* ===== ХОРОШАЯ КОНЦОВКА ===== */
+  #layer5c.active {
+    background: #f0ebe0 !important;
+  }
+  #goodEnding {
+    background: #f0ebe0;
+  }
+  #goodScroll {
+    animation: scrollUp 40s linear forwards;
+  }
+  @keyframes scrollUp {
+    0% { transform: translateY(100vh); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translateY(-100%); opacity: 1; }
+  }
+  /* ===== ПРЕЛОАДЕР ===== */
+  window.addEventListener('load', function () {
+    setTimeout(function () {
+      var pre = document.getElementById('preloader');
+      if (pre) pre.classList.add('hide');
+      document.body.classList.add('loaded');
+    }, 3600);
+  });
+
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1131,46 +1171,7 @@
       try { ensureAudio(); } catch (e) {}
     });
   }
-    /* ===== ФОН SKY.PNG В ЛОВУШКЕ ===== */
-  #trapSky {
-    position: absolute;
-    inset: 0;
-    background: #000;
-    background-image: url('sky.png');
-    background-size: cover;
-    background-position: center;
-    opacity: 0;
-    transition: opacity 3s ease;
-    z-index: 1;
-    pointer-events: none;
-  }
-  #trapSky.show {
-    opacity: 0.6;
-  }
-    /* ===== ХОРОШАЯ КОНЦОВКА ===== */
-  #layer5c.active {
-    background: #f0ebe0 !important;
-  }
-  #goodEnding {
-    background: #f0ebe0;
-  }
-  #goodScroll {
-    animation: scrollUp 40s linear forwards;
-  }
-  @keyframes scrollUp {
-    0% { transform: translateY(100vh); opacity: 0; }
-    10% { opacity: 1; }
-    100% { transform: translateY(-100%); opacity: 1; }
-  }
-  /* ===== ПРЕЛОАДЕР ===== */
-  window.addEventListener('load', function () {
-    setTimeout(function () {
-      var pre = document.getElementById('preloader');
-      if (pre) pre.classList.add('hide');
-      document.body.classList.add('loaded');
-    }, 3600);
-  });
-
+ 
   const PASSWORD = 'sub rosa';
   const TOTAL_LAYERS = 6;
 
